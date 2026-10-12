@@ -29,6 +29,14 @@
     "./tina-field": {
       "types": "./dist/tina-field.d.ts",
       "default": "./dist/tina-field.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
+    "./TinaBridge.svelte": {
+      "svelte": "./src/TinaBridge.svelte",
+      "default": "./src/TinaBridge.svelte"
     }
   },
   "license": "Apache-2.0",
@@ -39,6 +47,7 @@
       "src/hooks.ts",
       "src/is-edit-mode.ts",
       "src/tina-field.ts",
+      "src/vite.ts",
       "src/internal/forms-store.ts",
       "src/internal/escape.ts"
     ]
@@ -52,14 +61,16 @@
   },
   "peerDependencies": {
     "@sveltejs/kit": "^3.0.0",
-    "svelte": "^5.57.1"
+    "svelte": "^5.57.1",
+    "vite": "^8.0.12"
   },
   "devDependencies": {
     "@sveltejs/kit": "^3.0.0",
     "@tinacms/scripts": "workspace:*",
     "@types/node": "^22.13.1",
     "svelte": "^5.57.1",
-    "typescript": "^6.0.0"
+    "typescript": "^6.0.0",
+    "vite": "^8.0.12"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

@@ -24,7 +24,8 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 | `tinaField` | Re-export the shared bridge helper | Initial implementation |
 | `TinaMarkdown` | Svelte 5 component/renderer for Tina rich-text data and custom components | Planned |
 | Astro islands and static island endpoints | Reassess against SvelteKit SSR, prerender, and client navigation; do not copy Astro component or routing APIs | To design |
-| Vite bridge delivery and production asset emission | Serve `/admin/bridge.js` in development and make the asset available in production without writing into application source at config time | To design |
+| Vite bridge delivery and production asset emission | `tinaVitePlugin()` serves `/admin/bridge.js` in development and emits it into the client build | Initial implementation |
+| Client-side route transitions | `TinaBridge.svelte` initializes the bridge inside the editor iframe and refreshes its forms after SvelteKit navigation | Initial implementation |
 | Dev content invalidation | Determine whether SvelteKit/Vite needs a content watcher for Tina-created routes and new content | To investigate |
 
 ## Implementation sequence
@@ -49,6 +50,8 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 - The hook is explicitly composed by the app through SvelteKit's hook API. It
   must document composition with other `handle` hooks.
 - Svelte 5 runes and component events should be used for new Svelte components.
+- Vite 8's client environment is the only environment that emits the bridge
+  asset, so it does not get duplicated into the server build.
 - SvelteKit 3 requires TypeScript 6 in consuming apps, so this package pins
   its development compiler to the compatible major. Its build still needs
   verification within the monorepo toolchain.
@@ -88,6 +91,28 @@ export async function load(event) {
 These are provisional examples. Hook composition, generated-client types, and
 route behavior still need validation in a SvelteKit 3 consumer.
 
+Add the Vite plugin and one bridge component in the root layout:
+
+```ts
+// vite.config.ts
+import { sveltekit } from '@sveltejs/kit/vite';
+import { tinaVitePlugin } from '@tinacms/sveltekit/vite';
+
+export default defineConfig({ plugins: [sveltekit(), tinaVitePlugin()] });
+```
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import TinaBridge from '@tinacms/sveltekit/TinaBridge.svelte';
+
+  let { children } = $props();
+</script>
+
+<TinaBridge />
+{@render children()}
+```
+
 ## Progress log
 
 ### 2026-10-12
@@ -97,9 +122,13 @@ route behavior still need validation in a SvelteKit 3 consumer.
 - Added the initial package scaffold and compatibility/feature plan.
 - Added a first pass at `requestWithMetadata`, edit-mode detection, form
   payload collection, and the composable `tinaHandle` hook.
+- Added the Vite plugin for development bridge serving and client-build asset
+  emission, plus `TinaBridge.svelte` for iframe initialization and SvelteKit
+  navigation refresh.
 - Confirmed SvelteKit 3 requires Svelte 5.57.1, TypeScript 6, Vite 8, and
   Node 22.17 or newer from the official migration guide. Set the package's
   TypeScript dev dependency to the compatible major; compatibility remains to
   be checked against a real SvelteKit 3 app.
-- Bridge asset serving, client-navigation refresh, Svelte 5 rich text, and
-  adapter/prerender behavior remain unimplemented.
+- Svelte 5 rich-text rendering and adapter/prerender behavior remain
+  unimplemented. Bridge build output and client navigation still need
+  verification against a real SvelteKit 3 app.
