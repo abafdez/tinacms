@@ -22,7 +22,7 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 | Integration middleware | A composable SvelteKit `Handle` hook that collects forms and injects edit-mode form payloads and bridge bootstrap into HTML | Initial implementation |
 | `isEditMode` | Framework-neutral request check, carried over from Astro | Initial implementation |
 | `tinaField` | Re-export the shared bridge helper | Initial implementation |
-| `TinaMarkdown` | Svelte 5 component/renderer for Tina rich-text data and custom components | Planned |
+| `TinaMarkdown` | Svelte 5 component/renderer for Tina rich-text data and custom components | Initial implementation |
 | Astro islands and static island endpoints | Reassess against SvelteKit SSR, prerender, and client navigation; do not copy Astro component or routing APIs | To design |
 | Vite bridge delivery and production asset emission | `tinaVitePlugin()` serves `/admin/bridge.js` in development and emits it into the client build | Initial implementation |
 | Client-side route transitions | `TinaBridge.svelte` initializes the bridge inside the editor iframe and refreshes its forms after SvelteKit navigation | Initial implementation |
@@ -35,9 +35,10 @@ public API and runtime idiomatic to SvelteKit and Svelte.
    collection behavior to the SvelteKit request lifecycle.
 3. Validate hook composition, HTML response handling, and preview overlays with
    a minimal SvelteKit 3 app.
-4. Design and implement Svelte 5 rich-text rendering and editor-driven updates.
-5. Add development and production bridge asset delivery, then test with the
-   Tina admin iframe.
+4. Compare the Svelte 5 rich-text renderer against Astro's supported node set
+   and test it with actual generated Tina content.
+5. Validate development and production bridge delivery with the Tina admin
+   iframe and SvelteKit client navigation.
 6. Create a SvelteKit example using the shared kitchen-sink content model and
    document setup and limitations.
 7. Run package type/build checks and example build/dev verification across
@@ -59,27 +60,48 @@ public API and runtime idiomatic to SvelteKit and Svelte.
   against official docs and a real SvelteKit 3 consumer before treating this
   initial port as stable.
 
-## First-pass API sketch
+## Using the package from a SvelteKit 3 app
 
-Compose the Tina hook with the app's existing hooks:
+The current integration is intended for an SSR SvelteKit app. Start by adding
+TinaCMS and the SvelteKit package to the app, with the CLI as a development
+dependency:
+
+```sh
+pnpm add tinacms @tinacms/sveltekit
+pnpm add -D @tinacms/cli
+```
+
+SvelteKit 3 moves app configuration into the `sveltekit()` Vite plugin, so
+register the bridge plugin beside it in `vite.config.ts`:
 
 ```ts
-// src/hooks.server.ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { tinaVitePlugin } from '@tinacms/sveltekit/vite';
+
+export default defineConfig({
+  plugins: [sveltekit(), tinaVitePlugin()],
+});
+```
+
+Compose the request hook in `src/hooks.server.ts`:
+
+```ts
 import { sequence } from '@sveltejs/kit/hooks';
 import { tinaHandle } from '@tinacms/sveltekit/hooks';
 
 export const handle = sequence(tinaHandle);
 ```
 
-Pass the SvelteKit load event to the data helper so it can read preview
-overlays and record forms on that request's `locals`:
+Call the generated Tina query from `+page.server.ts` and pass the event to
+`requestWithMetadata`:
 
 ```ts
-// src/routes/posts/[slug]/+page.server.ts
 import { requestWithMetadata } from '@tinacms/sveltekit/data';
 import client from '$lib/tina/__generated__/client';
 
-export async function load(event) {
+export function load(event) {
   return requestWithMetadata(
     client.queries.post({ relativePath: `${event.params.slug}.md` }),
     event,
@@ -88,18 +110,8 @@ export async function load(event) {
 }
 ```
 
-These are provisional examples. Hook composition, generated-client types, and
-route behavior still need validation in a SvelteKit 3 consumer.
-
-Add the Vite plugin and one bridge component in the root layout:
-
-```ts
-// vite.config.ts
-import { sveltekit } from '@sveltejs/kit/vite';
-import { tinaVitePlugin } from '@tinacms/sveltekit/vite';
-
-export default defineConfig({ plugins: [sveltekit(), tinaVitePlugin()] });
-```
+Include `TinaBridge` once in the root layout for editor iframe startup and
+client navigation refresh:
 
 ```svelte
 <!-- src/routes/+layout.svelte -->
@@ -113,6 +125,38 @@ export default defineConfig({ plugins: [sveltekit(), tinaVitePlugin()] });
 {@render children()}
 ```
 
+Render Tina rich text with the Svelte component and register Svelte components
+by the names used by the rich-text template:
+
+```svelte
+<script lang="ts">
+  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { tinaField } from '@tinacms/sveltekit';
+  import Callout from '$lib/components/Callout.svelte';
+
+  let { data } = $props();
+  const components = { Callout };
+</script>
+
+<div data-tina-field={tinaField(data.post, '_body')}>
+  <TinaMarkdown content={data.post._body} {components} />
+</div>
+```
+
+The renderer escapes plain HTML nodes as text, sanitizes CMS link and image
+URLs, and supports named component overrides plus native and legacy table
+shapes. Mark editable fields with `data-tina-field={tinaField(data, 'field')}`.
+
+For local development, the app's `dev` script should run Tina's CLI around
+the SvelteKit Vite server (for example `tinacms dev -c "vite dev"`). For a
+production build, run `tinacms build` before `vite build` so the admin SPA is
+generated before SvelteKit builds the app. The package's bridge plugin emits
+the corresponding bridge asset as part of Vite's client build.
+
+This package does not yet support static prerendered pages, custom deployment
+base paths, or a separate-origin Tina admin. The first consumer should use
+same-origin `/admin/` and SSR routes while these cases are designed.
+
 ## Progress log
 
 ### 2026-10-12
@@ -125,10 +169,11 @@ export default defineConfig({ plugins: [sveltekit(), tinaVitePlugin()] });
 - Added the Vite plugin for development bridge serving and client-build asset
   emission, plus `TinaBridge.svelte` for iframe initialization and SvelteKit
   navigation refresh.
+- Added a Svelte 5 rich-text component, shared renderer types, and URL
+  sanitizers based on the Astro renderer's node behavior.
 - Confirmed SvelteKit 3 requires Svelte 5.57.1, TypeScript 6, Vite 8, and
   Node 22.17 or newer from the official migration guide. Set the package's
   TypeScript dev dependency to the compatible major; compatibility remains to
   be checked against a real SvelteKit 3 app.
-- Svelte 5 rich-text rendering and adapter/prerender behavior remain
-  unimplemented. Bridge build output and client navigation still need
-  verification against a real SvelteKit 3 app.
+- Adapter/prerender behavior, renderer parity, bridge build output, and client
+  navigation still need verification against a real SvelteKit 3 app.
