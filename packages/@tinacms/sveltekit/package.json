@@ -1,0 +1,71 @@
+{
+  "name": "@tinacms/sveltekit",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "package.json",
+    "src",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./data": {
+      "types": "./dist/data.d.ts",
+      "default": "./dist/data.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "default": "./dist/hooks.js"
+    },
+    "./is-edit-mode": {
+      "types": "./dist/is-edit-mode.d.ts",
+      "default": "./dist/is-edit-mode.js"
+    },
+    "./tina-field": {
+      "types": "./dist/tina-field.d.ts",
+      "default": "./dist/tina-field.js"
+    }
+  },
+  "license": "Apache-2.0",
+  "buildConfig": {
+    "entryPoints": [
+      "src/index.ts",
+      "src/data.ts",
+      "src/hooks.ts",
+      "src/is-edit-mode.ts",
+      "src/tina-field.ts",
+      "src/internal/forms-store.ts",
+      "src/internal/escape.ts"
+    ]
+  },
+  "scripts": {
+    "types": "tsc",
+    "build": "tinacms-scripts build"
+  },
+  "dependencies": {
+    "@tinacms/bridge": "workspace:^"
+  },
+  "peerDependencies": {
+    "@sveltejs/kit": "^3.0.0",
+    "svelte": "^5.57.1"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^3.0.0",
+    "@tinacms/scripts": "workspace:*",
+    "@types/node": "^22.13.1",
+    "svelte": "^5.57.1",
+    "typescript": "^6.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "url": "https://github.com/tinacms/tinacms.git",
+    "directory": "packages/@tinacms/sveltekit"
+  }
+}
