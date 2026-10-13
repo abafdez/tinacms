@@ -1018,10 +1018,10 @@ importers:
         version: 0.0.3
       next:
         specifier: 15.5.21
-        version: 15.5.21(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3)
+        version: 15.5.21(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3)
       next-auth:
         specifier: ^4.24.15
-        version: 4.24.15(next@15.5.21(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.24.15(next@15.5.21(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1171,42 +1171,6 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.4.1(@types/node@25.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
-
-  examples/sveltekit-demo/kitchen-sink:
-    devDependencies:
-      '@sveltejs/adapter-auto':
-        specifier: ^8.0.0
-        version: 8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))
-      '@sveltejs/kit':
-        specifier: ^3.0.0
-        version: 3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.2.0
-        version: 7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      '@vitest/browser-playwright':
-        specifier: ^4.1.8
-        version: 4.1.11(playwright@1.61.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)
-      playwright:
-        specifier: ^1.60.0
-        version: 1.61.1
-      svelte:
-        specifier: ^5.57.1
-        version: 5.57.2
-      svelte-check:
-        specifier: ^4.6.0
-        version: 4.7.6(picomatch@4.0.7)(svelte@5.57.2)(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.3.0
-        version: 8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
-      vitest:
-        specifier: ^4.1.8
-        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(@vitest/browser-playwright@4.1.11)(happy-dom@15.10.2)(jsdom@29.1.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      vitest-browser-svelte:
-        specifier: ^2.1.1
-        version: 2.2.1(svelte@5.57.2)(vitest@4.1.11)
 
   examples/sveltekit/kitchen-sink:
     devDependencies:
@@ -23070,10 +23034,6 @@ snapshots:
     dependencies:
       acorn: 8.19.0
 
-  '@sveltejs/adapter-auto@8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))':
-    dependencies:
-      '@sveltejs/kit': 3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-
   '@sveltejs/adapter-auto@8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))':
     dependencies:
       '@sveltejs/kit': 3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
@@ -23091,23 +23051,6 @@ snapshots:
       sirv: 3.0.2
       svelte: 5.57.2
       vite: 8.1.3(@types/node@22.19.17)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
-    optionalDependencies:
-      '@opentelemetry/api': 1.9.0
-      typescript: 6.0.3
-
-  '@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)))(svelte@5.57.2)(typescript@6.0.3)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
-    dependencies:
-      '@rolldown/pluginutils': 1.0.1
-      '@standard-schema/spec': 1.1.0
-      '@sveltejs/vite-plugin-svelte': 7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      cookie: 2.0.1
-      devalue: 5.9.4
-      esm-env: 1.2.2
-      magic-string: 1.4.3
-      mrmime: 2.0.1
-      sirv: 3.0.2
-      svelte: 5.57.2
-      vite: 8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       typescript: 6.0.3
@@ -23139,15 +23082,6 @@ snapshots:
       svelte: 5.57.2
       vite: 8.1.3(@types/node@22.19.17)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
       vitefu: 1.1.2(vite@8.1.3(@types/node@22.19.17)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-
-  '@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
-    dependencies:
-      deepmerge: 4.3.1
-      magic-string: 1.4.3
-      obug: 2.1.1
-      svelte: 5.57.2
-      vite: 8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
-      vitefu: 1.1.2(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
 
   '@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
@@ -24795,19 +24729,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/browser-playwright@4.1.11(playwright@1.61.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)':
-    dependencies:
-      '@vitest/browser': 4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)
-      '@vitest/mocker': 4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      playwright: 1.61.1
-      tinyrainbow: 3.2.0
-      vitest: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(@vitest/browser-playwright@4.1.11)(happy-dom@15.10.2)(jsdom@29.1.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-    transitivePeerDependencies:
-      - bufferutil
-      - msw
-      - utf-8-validate
-      - vite
-
   '@vitest/browser-playwright@4.1.11(playwright@1.61.1)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)':
     dependencies:
       '@vitest/browser': 4.1.11(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)
@@ -24838,23 +24759,6 @@ snapshots:
       - utf-8-validate
       - vite
     optional: true
-
-  '@vitest/browser@4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)':
-    dependencies:
-      '@blazediff/core': 1.9.1
-      '@vitest/mocker': 4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      '@vitest/utils': 4.1.11
-      magic-string: 0.30.21
-      pngjs: 7.0.0
-      sirv: 3.0.2
-      tinyrainbow: 3.2.0
-      vitest: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(@vitest/browser-playwright@4.1.11)(happy-dom@15.10.2)(jsdom@29.1.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      ws: 8.22.0
-    transitivePeerDependencies:
-      - bufferutil
-      - msw
-      - utf-8-validate
-      - vite
 
   '@vitest/browser@4.1.11(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)':
     dependencies:
@@ -24954,13 +24858,13 @@ snapshots:
     optionalDependencies:
       vite: 5.4.21(@types/node@22.19.3)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0)
 
-  '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@25.1.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.46.0))':
+  '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@25.1.0)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0))':
     dependencies:
       '@vitest/spy': 2.1.9
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 5.4.21(@types/node@25.1.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.46.0)
+      vite: 5.4.21(@types/node@25.1.0)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0)
 
   '@vitest/mocker@3.2.4(vite@6.4.3(@types/node@22.19.17)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
@@ -24978,14 +24882,6 @@ snapshots:
     optionalDependencies:
       vite: 4.5.14(@types/node@22.19.3)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0)
     optional: true
-
-  '@vitest/mocker@4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
-    dependencies:
-      '@vitest/spy': 4.1.11
-      estree-walker: 3.0.3
-      magic-string: 0.30.21
-    optionalDependencies:
-      vite: 8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
 
   '@vitest/mocker@4.1.11(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
@@ -30968,13 +30864,13 @@ snapshots:
       react-dom: 18.3.1(react@19.2.3)
       uuid: 11.1.1
 
-  next-auth@4.24.15(next@15.5.21(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next-auth@4.24.15(next@15.5.21(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.29.7
       '@panva/hkdf': 1.2.1
       cookie: 0.7.2
       jose: 4.15.9
-      next: 15.5.21(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3)
+      next: 15.5.21(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3)
       oauth: 0.9.15
       openid-client: 5.7.1
       preact: 10.28.3
@@ -31016,6 +30912,33 @@ snapshots:
       '@next/swc-linux-x64-musl': 15.5.19
       '@next/swc-win32-arm64-msvc': 15.5.19
       '@next/swc-win32-x64-msvc': 15.5.19
+      '@opentelemetry/api': 1.9.0
+      '@playwright/test': 1.61.1
+      babel-plugin-react-compiler: 1.0.0
+      sass: 1.97.3
+      sharp: 0.34.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
+  next@15.5.21(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.97.3):
+    dependencies:
+      '@next/env': 15.5.21
+      '@swc/helpers': 0.5.15
+      caniuse-lite: 1.0.30001760
+      postcss: 8.4.31
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      styled-jsx: 5.1.6(@babel/core@7.28.5)(react@18.3.1)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 15.5.21
+      '@next/swc-darwin-x64': 15.5.21
+      '@next/swc-linux-arm64-gnu': 15.5.21
+      '@next/swc-linux-arm64-musl': 15.5.21
+      '@next/swc-linux-x64-gnu': 15.5.21
+      '@next/swc-linux-x64-musl': 15.5.21
+      '@next/swc-win32-arm64-msvc': 15.5.21
+      '@next/swc-win32-x64-msvc': 15.5.21
       '@opentelemetry/api': 1.9.0
       '@playwright/test': 1.61.1
       babel-plugin-react-compiler: 1.0.0
@@ -33091,6 +33014,13 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.7
 
+  styled-jsx@5.1.6(@babel/core@7.28.5)(react@18.3.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 18.3.1
+    optionalDependencies:
+      '@babel/core': 7.28.5
+
   styled-jsx@5.1.6(@babel/core@7.29.7)(babel-plugin-macros@3.1.0)(react@19.2.7):
     dependencies:
       client-only: 0.0.1
@@ -34567,7 +34497,7 @@ snapshots:
   vitest@2.1.9(@types/node@25.1.0)(happy-dom@15.10.2)(jsdom@29.1.1)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.46.0):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@25.1.0)(lightningcss@1.33.0)(sass@1.97.3)(terser@5.46.0))
+      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@25.1.0)(lightningcss@1.32.0)(sass@1.97.3)(terser@5.46.0))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9
@@ -34644,37 +34574,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-
-  vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(@vitest/browser-playwright@4.1.11)(happy-dom@15.10.2)(jsdom@29.1.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)):
-    dependencies:
-      '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      '@vitest/pretty-format': 4.1.11
-      '@vitest/runner': 4.1.11
-      '@vitest/snapshot': 4.1.11
-      '@vitest/spy': 4.1.11
-      '@vitest/utils': 4.1.11
-      es-module-lexer: 2.1.0
-      expect-type: 1.3.0
-      magic-string: 0.30.21
-      obug: 2.1.1
-      pathe: 2.0.3
-      picomatch: 4.0.7
-      std-env: 4.3.0
-      tinybench: 2.9.0
-      tinyexec: 1.2.2
-      tinyglobby: 0.2.17
-      tinyrainbow: 3.2.0
-      vite: 8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@opentelemetry/api': 1.9.0
-      '@types/node': 25.1.0
-      '@vitest/browser-playwright': 4.1.11(playwright@1.61.1)(vite@8.3.4(@types/node@25.1.0)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vitest@4.1.11)
-      happy-dom: 15.10.2
-      jsdom: 29.1.1
-    transitivePeerDependencies:
-      - msw
 
   vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.1.11)(happy-dom@15.10.2)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)):
     dependencies:
