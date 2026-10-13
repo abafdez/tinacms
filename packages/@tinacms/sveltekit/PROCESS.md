@@ -68,6 +68,84 @@ these in order:
    separate-origin admin, and content invalidation after basic SSR editing is
    stable.
 
+## Rich-text renderer components
+
+`TinaMarkdown.svelte` renders these Tina rich-text nodes and lets the app
+replace their default output with Svelte components through `components`:
+
+| Node / key | Default output | Override props |
+|---|---|---|
+| `p`, `h1`–`h6`, `ul`, `ol`, `li`, `blockquote` | Matching HTML element | `children` snippet |
+| `lic` | `<div>` | `children` snippet |
+| `a` | Sanitized `<a href>` | `url`, `children` snippet |
+| `img` | Sanitized `<img src>` | `url`, `alt`, `caption` |
+| `code_block` | `<pre><code class="language-…">` | `value`, `lang` |
+| `table` | HTML table | `node`, `children` snippet |
+| `tr`, `th`, `td` | HTML table row/cell | `children`; cells also receive `align` |
+| `hr`, `break` | `<hr>`, `<br>` | no props |
+| `html`, `html_inline` | Escaped text | `value` |
+| Named MDX component, such as `Callout` | Visible missing-component label | Saved MDX props |
+
+Text leaves render inline marks (`bold`, `italic`, `underline`,
+`strikethrough`, `code`, and `highlight`) as semantic HTML. `invalid_markdown`
+renders its source in a `<pre>`. The renderer also handles native Tina tables
+and the legacy MDX `table` shape. These are internal rendering branches, not
+separately exported Svelte components; Astro's `Container`, `ImageNode`,
+`Leaf`, and `CodeBlockNode` are implementation files rather than public
+component names.
+
+Neither `tinacms` nor this SvelteKit package declares Shiki. Astro's
+`CodeBlockNode.astro` also emits plain `<pre><code>`; its README's Shiki
+reference is an example of an app-provided override. SvelteKit apps can do the
+same by installing Shiki themselves and passing a `code_block` component. The
+override API is typed in `src/types.ts` as `value` and optional `lang`. A Svelte
+override can call Shiki's `codeToHtml()` and render only that generated result
+with `{@html ...}`; never pass CMS-provided HTML directly to `{@html ...}`.
+
+The default renderer now gives headings, paragraphs, lists, blockquotes,
+links, images, inline code, code blocks, and tables restrained built-in
+spacing and styles. Default nodes use `tina-markdown-*` classes, so a project
+can target the renderer without replacing every node; component overrides
+remain fully app-styled.
+
+The package's Vitest server suite covers default markup, code-block and named
+MDX overrides, native tables, and unsafe URL handling. Its Chromium suite
+checks the computed default styles for code blocks, images, and tables. The
+example app still needs a separate browser check of the Tina iframe editing
+flow.
+
+### Run the package tests
+
+From the monorepo root, install workspace dependencies if needed and run:
+
+```sh
+pnpm install
+pnpm --filter @tinacms/sveltekit test
+```
+
+To run only the renderer tests:
+
+```sh
+pnpm --filter @tinacms/sveltekit exec vitest run src/__tests__/TinaMarkdown.test.ts
+```
+
+To watch the package suite while editing:
+
+```sh
+pnpm --filter @tinacms/sveltekit test-watch
+```
+
+The renderer's browser styles can be checked separately with:
+
+```sh
+pnpm --filter @tinacms/sveltekit test-browser
+```
+
+The server suite does not require a browser. The browser suite needs Playwright
+Chromium and its host system libraries; install them with
+`pnpm --filter @tinacms/sveltekit exec playwright install --with-deps chromium`
+when setting up a fresh machine.
+
 Do not treat an item as complete from compilation alone; each runtime item
 needs verification in the SvelteKit consumer.
 
