@@ -8,8 +8,9 @@
 
   onMount(() => {
     if (window.parent === window) return;
-
-    void import(/* @vite-ignore */ '/admin/bridge.js').then((bridge) => {
+    console.log('Loading Tina Bridge...');
+    const bridgeUrl = new URL('/admin/bridge.js', window.location.href).href;
+    void import(/* @vite-ignore */ bridgeUrl).then((bridge) => {
       bridge.init();
       refreshForms = bridge.refreshForms;
     });

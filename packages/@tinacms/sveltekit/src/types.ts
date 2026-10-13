@@ -1,4 +1,4 @@
-import type { Component } from 'svelte';
+import type { Component, Snippet } from 'svelte';
 
 export type TinaRichTextRoot = {
   type: 'root';
@@ -106,12 +106,75 @@ export type GeneratedRichTextContent = {
 
 export type TinaComponent = Component<any>;
 
-export type CustomComponentsMap = Record<string, TinaComponent | undefined>;
+type ComponentWithChildren = Component<{ children?: Snippet }>;
 
-export interface TinaMarkdownProps {
+export interface LinkComponentProps {
+  url: string;
+  children?: Snippet;
+}
+
+export interface ImageComponentProps {
+  url: string;
+  alt?: string;
+  caption?: string;
+}
+
+export interface CodeBlockComponentProps {
+  value: string;
+  lang?: string;
+}
+
+export interface HtmlComponentProps {
+  value: string;
+}
+
+export interface TableComponentProps {
+  node: TableElement;
+  children?: Snippet;
+}
+
+export interface TableCellComponentProps {
+  align?: TableAlign;
+  children?: Snippet;
+}
+
+/** Svelte components keyed by Tina node type or custom template name. */
+export type CustomComponentsMap<
+  Custom extends Record<string, object> = Record<never, never>,
+> = {
+  p?: ComponentWithChildren;
+  h1?: ComponentWithChildren;
+  h2?: ComponentWithChildren;
+  h3?: ComponentWithChildren;
+  h4?: ComponentWithChildren;
+  h5?: ComponentWithChildren;
+  h6?: ComponentWithChildren;
+  ul?: ComponentWithChildren;
+  ol?: ComponentWithChildren;
+  li?: ComponentWithChildren;
+  lic?: ComponentWithChildren;
+  blockquote?: ComponentWithChildren;
+  tr?: ComponentWithChildren;
+  hr?: Component;
+  break?: Component;
+  a?: Component<LinkComponentProps>;
+  img?: Component<ImageComponentProps>;
+  code_block?: Component<CodeBlockComponentProps>;
+  html?: Component<HtmlComponentProps>;
+  html_inline?: Component<HtmlComponentProps>;
+  table?: Component<TableComponentProps>;
+  td?: Component<TableCellComponentProps>;
+  th?: Component<TableCellComponentProps>;
+} & {
+  [K in keyof Custom]?: Component<Custom[K]>;
+} & Record<string, TinaComponent | undefined>;
+
+export interface TinaMarkdownProps<
+  Custom extends Record<string, object> = Record<never, never>,
+> {
   content:
     | TinaRichTextContent
     | GeneratedRichTextContent
     | GeneratedRichTextContent[];
-  components?: CustomComponentsMap;
+  components?: CustomComponentsMap<Custom>;
 }

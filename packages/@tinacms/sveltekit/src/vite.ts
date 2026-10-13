@@ -1,6 +1,5 @@
-import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
 import type { Plugin } from 'vite';
 
 const BRIDGE_ROUTE = '/admin/bridge.js';
@@ -11,17 +10,15 @@ function resolveBridge(): string {
 }
 
 export function tinaVitePlugin(): Plugin {
+  let isBuild = false;
+
   return {
     name: '@tinacms/sveltekit:bridge',
     applyToEnvironment(environment) {
       return environment.name === 'client';
     },
     configResolved(config) {
-      if (!config.publicDir) return;
-
-      const adminDir = join(config.publicDir, 'admin');
-      mkdirSync(adminDir, { recursive: true });
-      copyFileSync(resolveBridge(), join(adminDir, 'bridge.js'));
+      isBuild = config.command === 'build';
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
@@ -39,6 +36,15 @@ export function tinaVitePlugin(): Plugin {
           res.statusCode = 500;
           res.end('/* Tina bridge is unavailable */');
         }
+      });
+    },
+    buildStart() {
+      if (!isBuild) return;
+
+      this.emitFile({
+        type: 'asset',
+        fileName: 'admin/bridge.js',
+        source: readFileSync(resolveBridge()),
       });
     },
   };

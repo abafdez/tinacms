@@ -1,16 +1,13 @@
+
 <script lang="ts">
-//   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { tinaField } from '@tinacms/sveltekit';
+  // import Callout from '#lib/components/Callout.svelte';
+
   let { data } = $props();
+  // const components = { Callout };
 </script>
 
-<article>
-  <!-- data-tina-field highlights the field when clicked inside visual editing -->
-  <h1 >
-    {data.title}
-  </h1>
-  <!-- TODO: Rich-text body rendered via Svelte 5 TinaMarkdown -->
-    <!-- <TinaMarkdown
-      content={data.body}
-    /> -->
-    <pre>{JSON.stringify(data.body, null, 2)}</pre>
-</article>
+<div data-tina-field={tinaField(data.data.post.body, 'body')}>
+  <TinaMarkdown content={data.data.post.body} />
+</div>
