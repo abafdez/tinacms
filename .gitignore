@@ -38,6 +38,8 @@ topologicalDeps.txt
 
 # Ignore any .next folder
 **/.next/**
+# Ignore any .svelte-kit folder
+**/.svelte-kit/**
 
 # Coverage reports
 **/coverage/
