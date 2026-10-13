@@ -59,7 +59,10 @@
       "src/hooks.ts",
       "src/is-edit-mode.ts",
       "src/tina-field.ts",
-      "src/vite.ts",
+      {
+        "name": "src/vite.ts",
+        "target": "node"
+      },
       "src/types.ts",
       "src/sanitize.ts",
       "src/internal/forms-store.ts",

@@ -24,7 +24,7 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 | `tinaField` | Re-export the shared bridge helper | Initial implementation |
 | `TinaMarkdown` | Svelte 5 component/renderer for Tina rich-text data and custom components | Initial implementation |
 | Astro islands and static island endpoints | Reassess against SvelteKit SSR, prerender, and client navigation; do not copy Astro component or routing APIs | To design |
-| Vite bridge delivery and production asset emission | `tinaVitePlugin()` serves `/admin/bridge.js` in development and emits it into the client build | Initial implementation |
+| Vite bridge delivery and production asset emission | `tinaVitePlugin()` serves `/admin/bridge.js` in development and stages it in SvelteKit's configured static assets directory for production | Initial implementation |
 | Client-side route transitions | `TinaBridge.svelte` initializes the bridge inside the editor iframe and refreshes its forms after SvelteKit navigation | Initial implementation |
 | Dev content invalidation | Determine whether SvelteKit/Vite needs a content watcher for Tina-created routes and new content | To investigate |
 
@@ -51,8 +51,9 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 - The hook is explicitly composed by the app through SvelteKit's hook API. It
   must document composition with other `handle` hooks.
 - Svelte 5 runes and component events should be used for new Svelte components.
-- Vite 8's client environment is the only environment that emits the bridge
-  asset, so it does not get duplicated into the server build.
+- Vite 8's client environment stages the bridge in SvelteKit's configured
+  static assets directory (`kit.files.assets`, `static/` by default), beside
+  the Tina admin app.
 - SvelteKit 3 requires TypeScript 6 in consuming apps, so this package pins
   its development compiler to the compatible major. Its build still needs
   verification within the monorepo toolchain.
@@ -67,8 +68,10 @@ TinaCMS and the SvelteKit package to the app, with the CLI as a development
 dependency:
 
 ```sh
-pnpm add tinacms @tinacms/sveltekit
+pnpm add -D tinacms @tinacms/sveltekit
 pnpm add -D @tinacms/cli
+#for development of the extension
+pnpm add -D tinacms @tinacms/sveltekit --workspace
 ```
 
 SvelteKit 3 moves app configuration into the `sveltekit()` Vite plugin, so
@@ -150,8 +153,10 @@ shapes. Mark editable fields with `data-tina-field={tinaField(data, 'field')}`.
 For local development, the app's `dev` script should run Tina's CLI around
 the SvelteKit Vite server (for example `tinacms dev -c "vite dev"`). For a
 production build, run `tinacms build` before `vite build` so the admin SPA is
-generated before SvelteKit builds the app. The package's bridge plugin emits
-the corresponding bridge asset as part of Vite's client build.
+generated before SvelteKit builds the app. The package's Vite plugin copies the
+bridge to the configured SvelteKit static assets directory when Vite resolves
+its config, so it is available beside the admin app in development and
+production builds.
 
 This package does not yet support static prerendered pages, custom deployment
 base paths, or a separate-origin Tina admin. The first consumer should use
@@ -177,3 +182,11 @@ same-origin `/admin/` and SSR routes while these cases are designed.
   be checked against a real SvelteKit 3 app.
 - Adapter/prerender behavior, renderer parity, bridge build output, and client
   navigation still need verification against a real SvelteKit 3 app.
+
+### 2026-10-13
+
+- The first Vite plugin version emitted `admin/bridge.js` as a Vite build
+  asset, which did not place it beside Tina's generated admin files in
+  SvelteKit's static assets directory. It now stages the bridge at
+  `<kit.files.assets>/admin/bridge.js` when Vite resolves its config; the dev
+  middleware continues to serve the same URL directly.
