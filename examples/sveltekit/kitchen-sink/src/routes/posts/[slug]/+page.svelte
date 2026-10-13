@@ -1,13 +1,21 @@
 
 <script lang="ts">
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { subscribeToTinaData } from '@tinacms/sveltekit/data';
   import { tinaField } from '@tinacms/sveltekit';
-  // import Callout from '#lib/components/Callout.svelte';
 
   let { data } = $props();
-  // const components = { Callout };
+  let post = $state(data.data.post);
+
+  $effect(() => {
+    const query = data;
+    post = query.data.post;
+    return subscribeToTinaData(query, (updated) => {
+      post = updated.post;
+    });
+  });
 </script>
 
-<div data-tina-field={tinaField(data.data.post.body, 'body')}>
-  <TinaMarkdown content={data.data.post.body} />
+<div data-tina-field={tinaField(post, 'body')}>
+  <TinaMarkdown content={post.body} />
 </div>

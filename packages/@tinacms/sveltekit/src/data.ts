@@ -23,6 +23,46 @@ export interface RequestOptions {
   priority?: 'primary';
 }
 
+export function subscribeToTinaData<TData extends object>(
+  result: Pick<QueryResult<TData>, 'id' | 'data'>,
+  onUpdate: (data: TData) => void
+): () => void {
+  if (typeof window === 'undefined' || window.parent === window) {
+    return () => {};
+  }
+
+  const handleMessage = (event: MessageEvent<unknown>) => {
+    if (
+      event.source !== window.parent ||
+      event.origin !== window.location.origin
+    ) {
+      return;
+    }
+
+    const message = event.data;
+    if (!message || typeof message !== 'object') return;
+
+    const update = message as {
+      type?: unknown;
+      id?: unknown;
+      data?: unknown;
+    };
+    if (
+      update.type !== 'updateData' ||
+      update.id !== result.id ||
+      !update.data ||
+      typeof update.data !== 'object'
+    ) {
+      return;
+    }
+
+    onUpdate(addMetadata(result.id, update.data) as TData);
+  };
+
+  window.addEventListener('message', handleMessage);
+  return () => window.removeEventListener('message', handleMessage);
+}
+
 export async function requestWithMetadata<TData>(
   source: ClientResult<TData> | Promise<ClientResult<TData>>,
   event: Pick<RequestEvent, 'request' | 'locals'>,

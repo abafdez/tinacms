@@ -1,5 +1,6 @@
 export {
   requestWithMetadata,
+  subscribeToTinaData,
   type QueryResult,
   type RequestOptions,
 } from './data';

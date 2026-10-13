@@ -140,6 +140,35 @@ export function load(event) {
 }
 ```
 
+Subscribe to admin edits in the Svelte page so Tina's `updateData` messages
+update the rendered data. Keep the request result (including its `id`) for the
+subscription, and mark fields using the parent query object:
+
+```svelte
+<script lang="ts">
+  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { subscribeToTinaData } from '@tinacms/sveltekit/data';
+  import { tinaField } from '@tinacms/sveltekit';
+  import Callout from '$lib/components/Callout.svelte';
+
+  let { data } = $props();
+  let post = $state(data.data.post);
+  const components = { Callout };
+
+  $effect(() => {
+    const query = data;
+    post = query.data.post;
+    return subscribeToTinaData(query, (updated) => {
+      post = updated.post;
+    });
+  });
+</script>
+
+<div data-tina-field={tinaField(post, 'body')}>
+  <TinaMarkdown content={post.body} {components} />
+</div>
+```
+
 Include `TinaBridge` once in the root layout for editor iframe startup and
 client navigation refresh:
 
@@ -153,24 +182,6 @@ client navigation refresh:
 
 <TinaBridge />
 {@render children()}
-```
-
-Render Tina rich text with the Svelte component and register Svelte components
-by the names used by the rich-text template:
-
-```svelte
-<script lang="ts">
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
-  import Callout from '$lib/components/Callout.svelte';
-
-  let { data } = $props();
-  const components = { Callout };
-</script>
-
-<div data-tina-field={tinaField(data.post, '_body')}>
-  <TinaMarkdown content={data.post._body} {components} />
-</div>
 ```
 
 The renderer escapes plain HTML nodes as text, sanitizes CMS link and image
@@ -220,3 +231,7 @@ same-origin `/admin/` and SSR routes while these cases are designed.
 - Changed `TinaBridge.svelte` to form the bridge URL at runtime so Vite does
   not try to resolve `/admin/bridge.js` as a source import. Package build and
   TypeScript checks pass; the running SvelteKit app still needs verification.
+- Added `subscribeToTinaData()` for same-origin `updateData` messages and
+  documented how a Svelte 5 page can update its reactive query data. Package
+  build and TypeScript checks pass; the kitchen-sink page still needs to wire
+  this subscription and be verified in the editor.
