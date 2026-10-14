@@ -5,8 +5,9 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tinacms dev -c \"vite dev\"",
-		"build": "tinacms build && vite build",
-		"preview": "tinacms build && vite preview",
+		"build": "TINA_PUBLIC_IS_LOCAL=true tinacms build --local --skip-cloud-checks -c \"TINA_PUBLIC_IS_LOCAL=true vite build\"",
+		"build:static": "TINA_STATIC_BUILD=true TINA_PUBLIC_IS_LOCAL=true tinacms build --local --skip-cloud-checks -c \"TINA_STATIC_BUILD=true TINA_PUBLIC_IS_LOCAL=true vite build\" && node -e \"require('node:fs').rmSync('build-static/admin', { recursive: true, force: true })\"",
+		"preview": "node build",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -15,6 +16,8 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^8.0.0",
+		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/adapter-static": "4.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tinacms/app": "workspace:*",

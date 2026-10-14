@@ -1,26 +1,29 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
-import adapter from '@sveltejs/adapter-auto';
+import adapterNode from '@sveltejs/adapter-node';
+import adapterStatic from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { tinaVitePlugin } from '@tinacms/sveltekit/vite';
 
+const isStaticBuild = process.env.TINA_STATIC_BUILD === 'true';
+
 export default defineConfig({
 	plugins: [
-
 		sveltekit({
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-
-			// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-			// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-			adapter: adapter()
+			adapter: isStaticBuild
+				? adapterStatic({
+						pages: 'build-static',
+						assets: 'build-static',
+						strict: false
+					})
+				: adapterNode()
 		}),
-
-		tinaVitePlugin()
+		...(!isStaticBuild ? [tinaVitePlugin()] : [])
 	],
 	test: {
 		expect: { requireAssertions: true },
@@ -38,7 +41,6 @@ export default defineConfig({
 					exclude: ['src/lib/server/**']
 				}
 			},
-
 			{
 				extends: './vite.config.ts',
 				test: {

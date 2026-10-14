@@ -1,21 +1,16 @@
 
 <script lang="ts">
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
-  import { subscribeToTinaData } from '@tinacms/sveltekit/data';
-  import { tinaField } from '@tinacms/sveltekit';
+	import TinaIsland from '@tinacms/sveltekit/TinaIsland.svelte';
+	import PostView from '#lib/components/PostView.svelte';
 
   let { data } = $props();
-  let post = $state(data.data.post);
-
-  $effect(() => {
-    const query = data;
-    post = query.data.post;
-    return subscribeToTinaData(query, (updated) => {
-      post = updated.post;
-    });
-  });
 </script>
 
-<div data-tina-field={tinaField(post, 'body')}>
-  <TinaMarkdown content={post.body} />
-</div>
+<TinaIsland
+	name="post"
+	wrapper={{ tag: 'article', className: 'post-content' }}
+	params={{ slug: data.data.post._sys.filename }}
+	primary
+>
+	<PostView query={data} />
+</TinaIsland>

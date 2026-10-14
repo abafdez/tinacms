@@ -38,6 +38,10 @@
       "types": "./dist/sanitize.d.ts",
       "default": "./dist/sanitize.js"
     },
+    "./experimental": {
+      "types": "./dist/experimental.d.ts",
+      "default": "./dist/experimental.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "default": "./dist/vite.js"
@@ -45,6 +49,10 @@
     "./TinaBridge.svelte": {
       "svelte": "./src/TinaBridge.svelte",
       "default": "./src/TinaBridge.svelte"
+    },
+    "./TinaIsland.svelte": {
+      "svelte": "./src/TinaIsland.svelte",
+      "default": "./src/TinaIsland.svelte"
     },
     "./TinaMarkdown.svelte": {
       "svelte": "./src/TinaMarkdown.svelte",
@@ -59,6 +67,10 @@
       "src/hooks.ts",
       "src/is-edit-mode.ts",
       "src/tina-field.ts",
+      {
+        "name": "src/experimental.ts",
+        "target": "node"
+      },
       {
         "name": "src/vite.ts",
         "target": "node"

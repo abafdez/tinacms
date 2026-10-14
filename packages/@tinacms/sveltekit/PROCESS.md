@@ -23,7 +23,7 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 | `isEditMode` | Framework-neutral request check, carried over from Astro | Initial implementation |
 | `tinaField` | Re-export the shared bridge helper | Initial implementation |
 | `TinaMarkdown` | Svelte 5 component/renderer for Tina rich-text data and custom components | Initial implementation |
-| Astro islands and static island endpoints | Reassess against SvelteKit SSR, prerender, and client navigation; do not copy Astro component or routing APIs | To design |
+| Astro islands and static island endpoints | `TinaIsland.svelte` marker plus an experimental SvelteKit server handler; hybrid adapter smoke test remains | Experimental |
 | Vite bridge delivery and production asset emission | `tinaVitePlugin()` serves `/admin/bridge.js` in development and emits it into the client build | Initial implementation |
 | Client-side route transitions | `TinaBridge.svelte` initializes the bridge inside the editor iframe and refreshes its forms after SvelteKit navigation | Initial implementation |
 | Dev content invalidation | Determine whether SvelteKit/Vite needs a content watcher for Tina-created routes and new content | To investigate |
@@ -46,27 +46,17 @@ public API and runtime idiomatic to SvelteKit and Svelte.
 
 ## Next agenda
 
-The package has an initial implementation and its package build succeeds. The
-integration has not yet been verified in a running SvelteKit app. Work through
-these in order:
+The user confirmed that live edits, click-to-focus, post navigation, and the
+ordinary visitor response work in Vite dev. Continue with these goals:
 
-1. **Finish the bridge path.** Confirm development serves `/admin/bridge.js`
-   from Vite middleware without a copy in the app's `static/` directory, and
-   confirm a production SvelteKit client build contains `admin/bridge.js`.
-   Then check that the Tina iframe initializes and route navigation refreshes
-   forms.
-2. **Verify the server request lifecycle.** Check edit-mode detection, query
-   metadata, preview overlays, multiple collected forms and primary-form
-   ordering, injected HTML, and behavior for non-HTML and empty responses.
-3. **Check rich-text parity.** Compare `TinaMarkdown` output with Tina-generated
-   content, including custom components, tables, links, images, and unsupported
-   node fallbacks.
-4. **Validate the SvelteKit 3 example and package API.** Confirm the documented
-   setup works with Svelte 5, package subpath exports resolve after build, and
-   the supported SSR adapter build serves the admin and bridge assets.
-5. **Decide later support.** Design prerendered pages, non-root base paths,
-   separate-origin admin, and content invalidation after basic SSR editing is
-   stable.
+1. **Finish hybrid prerendered editing.** Integrate the experimental island
+   marker and server handler in the example under a server-capable adapter, then
+   verify priming and live edits in Tina.
+2. **Teach the deployment choices.** Provide a static-only build that omits
+   Tina admin assets, and a hybrid build that prerenders pages while serving
+   the refresh endpoint at runtime.
+3. **Finish package verification.** Check exports, generated declarations,
+   consumer installation, and the server/static support matrix.
 
 ## Rich-text renderer components
 
@@ -268,14 +258,19 @@ shapes. Mark editable fields with `data-tina-field={tinaField(data, 'field')}`.
 
 For local development, the app's `dev` script should run Tina's CLI around
 the SvelteKit Vite server (for example `tinacms dev -c "vite dev"`). For a
-production build, run `tinacms build` before `vite build` so the admin SPA is
-generated before SvelteKit builds the app. The package's Vite plugin serves
-the bridge from the package during development and emits `admin/bridge.js` into
-the client build for production.
+hybrid production build, pass `vite build` to `tinacms build` with `-c`. The
+CLI starts its local GraphQL server before it runs that command, which lets
+SvelteKit fetch Tina content while prerendering. Running `vite build` after
+`tinacms build` exits does not keep that local API available. The package's
+Vite plugin serves the bridge from the package during development and emits
+`admin/bridge.js` into the client build for production.
 
-This package does not yet support static prerendered pages, custom deployment
-base paths, or a separate-origin Tina admin. The first consumer should use
-same-origin `/admin/` and SSR routes while these cases are designed.
+The experimental island API is intended for prerendered pages deployed with a
+server-capable adapter. A static-files-only deployment cannot run its refresh
+endpoint, so the static build uses `adapter-static` and omits the generated
+`build-static/admin` output. Non-root deployment paths are supported by
+`TinaIsland`'s `basePath` prop; a separate-origin Tina admin is not part of
+this first pass.
 
 ## Progress log
 
@@ -313,3 +308,96 @@ same-origin `/admin/` and SSR routes while these cases are designed.
   documented how a Svelte 5 page can update its reactive query data. Package
   build and TypeScript checks pass; the kitchen-sink page still needs to wire
   this subscription and be verified in the editor.
+
+### 2026-10-14
+
+- Added `@tinacms/sveltekit/experimental` with an island request handler using
+  Svelte 5 server rendering; its test confirms that `requestWithMetadata()`
+  applies the Tina preview overlay before rendering.
+- Added `TinaIsland.svelte` with encoded endpoint parameters, optional base
+  path, a primary-island marker, and wrapper validation. The experimental
+  handler validates same-origin preview POSTs, limits and checks the JSON
+  envelope, returns uncached HTML, and renders only registered components.
+- Added handler and component tests for overlay rendering, priming, rejected
+  requests, payload size, and marker serialization. All 19 package tests,
+  TypeScript checks, and the package build pass.
+- Changed `tinaHandle` to inject forms and the bridge with SvelteKit's
+  `transformPageChunk`, keeping editor-mode HTML streaming. Non-editor
+  responses are returned unchanged, and non-HTML editor responses retain
+  their body and content length.
+- Added tests for per-request form ordering, field metadata, editor-message
+  filtering, bridge dev serving, and build asset emission. TypeScript, Vitest,
+  and the package build pass.
+- Added a streaming-response test that reads injected editor HTML before the
+  source response completes.
+- Added package usage docs for composing `tinaHandle` with existing hooks.
+- The example's client build emitted `.svelte-kit/output/client/admin/bridge.js`.
+  The build then failed at the adapter-static prerender check because the
+  example still had dynamic routes without prerender entries.
+- Added a marked post title alongside the body. The user confirmed live edits,
+  click-to-focus, and navigation in the running example, and confirmed that a
+  regular page response has no Tina form payload or bridge request.
+- Added `adapter-node` as the example's hybrid adapter while preserving the
+  `adapter-static` branch. The dynamic post pages now provide prerender entries
+  and use `TinaIsland` with a matching `/tina-island/[name]` POST route.
+- Changed the hybrid `build` script to run SvelteKit's build under
+  `tinacms build --local --skip-cloud-checks -c`, keeping the local Tina API
+  alive during prerendering. Added `build:static` for static output and made
+  the root layout prerenderable so the static adapter includes the home and
+  post-list pages. The post detail route supplies entries; the refresh POST
+  endpoint remains server-only and is intentionally absent from the static
+  deployment.
+- Verified both scripts end to end: the hybrid build completed with
+  `adapter-node`; the static build completed with `adapter-static`, prerendered
+  every post entry, and removed `build-static/admin/index.html`. Its client
+  output does not contain the generated `admin/bridge.js` asset. The runtime
+  editing flow still needs a browser check against the generated Node server.
+
+## Manual SvelteKit iframe check
+
+From `examples/sveltekit/kitchen-sink/`, run `pnpm dev`. Its `dev` script
+starts Tina's local GraphQL/admin process and runs `vite dev`. If Tina is
+already running separately, start the app with `./node_modules/.bin/vite dev`.
+
+1. Open the example's Tina admin and preview the `hello-world` post at
+   `/posts/hello-world`.
+2. In browser developer tools, confirm `/admin/bridge.js` loads with status
+   200 and the preview document contains `data-tina-form` and
+   `data-tina-primary`.
+3. Click the post title and body in the preview. Tina should select the
+   matching fields.
+4. Change the title or body without saving. The preview should update from
+   Tina's unsaved data.
+5. Navigate to another post in the preview and repeat the field check.
+6. Open `/posts/hello-world` directly outside Tina. It should render normally
+   without `data-tina-form` payloads or a bridge request.
+
+## Manual hybrid build check
+
+The SvelteKit example's default adapter is `adapter-node`. From
+`examples/sveltekit/kitchen-sink/`, run `pnpm build`, then start the generated
+Node server with `pnpm preview`. The script starts Tina's local GraphQL server
+and runs `vite build` before Tina shuts down.
+
+1. Open a prerendered post from the Tina admin preview.
+2. In Network, confirm the bridge primes the island with a POST to
+   `/tina-island/post?slug=...` and receives HTML containing `data-tina-form`.
+3. Edit the post without saving. The preview should refresh from the island
+   endpoint with the unsaved overlay.
+4. Open the same post outside Tina. The static page should not have a Tina form
+   payload; the endpoint should only be called from the editor iframe.
+
+## Manual static build check
+
+From `examples/sveltekit/kitchen-sink/`, run `pnpm build:static`. This still
+uses Tina's local GraphQL server to render the content, but selects
+`adapter-static`. It removes `build-static/admin` from the generated site, and
+the static host cannot provide the island refresh endpoint.
+
+1. Confirm `build-static/index.html` and
+   `build-static/posts/hello-world.html` exist.
+2. Confirm `build-static/admin/index.html` does not exist.
+3. Serve the `build-static/` directory with a static file server and open the
+   home page and post URL. The post should render with content from build time.
+4. Tina visual editing and unsaved island refreshes require the hybrid Node
+   build; the static build is for public pages only.
