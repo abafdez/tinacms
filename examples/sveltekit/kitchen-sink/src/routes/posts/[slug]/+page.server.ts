@@ -16,7 +16,6 @@
 // }
 import { requestWithMetadata } from '@tinacms/sveltekit/data';
 import client from '#tina/__generated__/client.ts';
-
 export const prerender = true;
 
 export async function entries() {

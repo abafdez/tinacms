@@ -1,4 +1,5 @@
 import client from '#tina/__generated__/client.ts';
+export const prerender = true;
 
 export async function load() {
 	const postsResponse = await client.queries.postConnection();
