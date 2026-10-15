@@ -6,6 +6,7 @@
     wrapper: { tag: string; className?: string };
     params?: Record<string, string | number>;
     primary?: boolean;
+    managed?: boolean;
     basePath?: string;
     children?: Snippet;
   }
@@ -15,6 +16,7 @@
     wrapper,
     params,
     primary = false,
+    managed = false,
     basePath = '',
     children,
   }: Props = $props();
@@ -77,6 +79,7 @@
   class={wrapper.className}
   data-tina-island={marker}
   data-tina-island-primary={primary ? '' : undefined}
+  data-tina-island-managed={managed ? '' : undefined}
 >
   {@render children?.()}
 </svelte:element>

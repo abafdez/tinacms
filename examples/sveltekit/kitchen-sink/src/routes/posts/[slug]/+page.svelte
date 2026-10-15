@@ -11,6 +11,7 @@
 	wrapper={{ tag: 'article', className: 'post-content' }}
 	params={{ slug: data.data.post._sys.filename }}
 	primary
+	managed
 >
 	<PostView query={data} />
 </TinaIsland>

@@ -1,5 +1,14 @@
 import { defineConfig } from "tinacms";
 
+import Announcement from "./collections/announcement";
+import Author from "./collections/author";
+import Blog from "./collections/blog";
+import Global from "./collections/global";
+import Page from "./collections/page";
+import Post from "./collections/post";
+import SEO from "./collections/seo";
+import Tag from "./collections/tag";
+
 // Your hosting provider likely exposes this as an environment variable
 const branch =
   process.env.GITHUB_BRANCH ||
@@ -9,54 +18,22 @@ const branch =
 
 export default defineConfig({
   branch,
-  // Get this from tina.io
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-  // Get this from tina.io
   token: process.env.TINA_TOKEN,
+  localContentPath: "../../../shared",
   build: {
     outputFolder: "admin",
     publicFolder: "static",
   },
   // Disable telemetry to avoid sending any data to Tina during development
   telemetry: "disabled",
-  // Uncomment to allow cross-origin requests from non-localhost origins
-  // during local development (e.g. GitHub Codespaces, Gitpod, Docker).
-  // Use 'private' to allow all private-network IPs (WSL2, Docker, etc.)
-  // server: {
-  //   allowedOrigins: ['https://your-codespace.github.dev'],
-  // },
   media: {
     tina: {
-      mediaRoot: "images",
-      publicFolder: "static",
+      mediaRoot: "uploads",
+      publicFolder: "public",
     },
   },
-  // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/r/content-modelling-collections/
   schema: {
-    collections: [
-      {
-        name: "post",
-        label: "Posts",
-        path: "content/posts",
-        ui: {
-          router: ({ document }) => `/posts/${document._sys.filename}`,
-        },
-        fields: [
-          {
-            type: "string",
-            name: "title",
-            label: "Title",
-            isTitle: true,
-            required: true,
-          },
-          {
-            type: "rich-text",
-            name: "body",
-            label: "Body",
-            isBody: true,
-          },
-        ],
-      },
-    ],
+    collections: [Tag, Author, Global, Post, Blog, Page, SEO, Announcement],
   },
 });

@@ -24,6 +24,7 @@
 		"@tinacms/app": "workspace:*",
 		"@tinacms/cli": "workspace:*",
 		"@tinacms/scripts": "workspace:*",
+		"@tinacms/datalayer": "workspace:*",
 		"@tinacms/sveltekit": "workspace:*",
 		"@types/node": "^26.6.5",
 		"@vitest/browser-playwright": "^4.1.8",

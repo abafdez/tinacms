@@ -107,7 +107,7 @@ application's `static/` directory.
 prerendered and support live Tina edits, deploy them with an adapter that also
 runs SvelteKit server routes. The `TinaIsland` component marks the region in
 the prerendered HTML. The bridge bootstrapped by `TinaBridge` then calls a
-server endpoint to load the region with Tina's current unsaved data.
+server endpoint to load the region Tina's current unsaved data.
 
 Create a dynamic endpoint at `src/routes/tina-island/[name]/+server.ts`:
 
