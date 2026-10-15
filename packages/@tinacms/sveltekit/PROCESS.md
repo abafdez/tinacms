@@ -401,3 +401,11 @@ the static host cannot provide the island refresh endpoint.
    home page and post URL. The post should render with content from build time.
 4. Tina visual editing and unsaved island refreshes require the hybrid Node
    build; the static build is for public pages only.
+
+## Svelte 5 Kitchen-Sink Components & Vanilla CSS Architecture
+
+To mirror the reference Astro kitchen-sink without adopting Tailwind in the SvelteKit example:
+- Pure Svelte 5 components with scoped `<style>` elements and CSS Custom Properties (`src/lib/styles/theme.css`).
+- Modular blocks (`Hero`, `Features`, `CTA`, `Testimonial`, `Content`) mirrored from the Astro reference into Svelte 5 runes (`$props`, `$state`, `$derived`).
+- Native data subscription and visual field editing with `tinaField` and `subscribeToTinaData`.
+

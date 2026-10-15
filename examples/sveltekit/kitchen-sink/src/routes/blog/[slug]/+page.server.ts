@@ -1,0 +1,25 @@
+import type { PageServerLoad, EntryGenerator } from './$types';
+import { requestWithMetadata } from '@tinacms/sveltekit/data';
+import client from '#tina/__generated__/client.ts';
+
+export const prerender = true;
+
+export const entries: EntryGenerator = async () => {
+  const response = await client.queries.blogConnection({ first: 1000 });
+  return (
+    response.data.blogConnection.edges?.flatMap((edge) => {
+      const slug = edge?.node?._sys.filename;
+      return slug ? [{ slug }] : [];
+    }) ?? []
+  );
+};
+
+export const load: PageServerLoad = async (event) => {
+  const blogQuery = await requestWithMetadata(
+    client.queries.blog({ relativePath: `${event.params.slug}.md` }),
+    event,
+    { priority: 'primary' }
+  );
+
+  return { blogQuery };
+};

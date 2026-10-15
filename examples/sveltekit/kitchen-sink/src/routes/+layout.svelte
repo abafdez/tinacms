@@ -1,13 +1,72 @@
 <script lang="ts">
-	import favicon from '#lib/assets/favicon.svg';
-	import type { LayoutProps } from './$types';
-	import TinaBridge from '@tinacms/sveltekit/TinaBridge.svelte';
+  import '#lib/styles/theme.css';
+  import favicon from '#lib/assets/favicon.svg';
+  import Header from '#lib/components/layout/Header.svelte';
+  import Footer from '#lib/components/layout/Footer.svelte';
+  import TinaBridge from '@tinacms/sveltekit/TinaBridge.svelte';
+  import { subscribeToTinaData } from '@tinacms/sveltekit/data';
+  import type { LayoutProps } from './$types';
 
-	let { children }: LayoutProps = $props();
+  let { data, children }: LayoutProps = $props();
+
+  let preview = $state<{ id: string; data: any }>();
+
+  $effect(() => {
+    if (!data.globalQuery) return;
+    const currentQuery = data.globalQuery;
+    return subscribeToTinaData(currentQuery, (updated) => {
+      preview = { id: currentQuery.id, data: updated };
+    });
+  });
+
+  const globalData = $derived(
+    data.globalQuery
+      ? (preview?.id === data.globalQuery.id ? preview.data : data.globalQuery.data)?.global
+      : null
+  );
+
+  const header = $derived(globalData?.header);
+  const footer = $derived(globalData?.footer);
+  const theme = $derived(globalData?.theme);
+  const themeColor = $derived(theme?.color || 'blue');
+  const nav = $derived(
+    header?.nav || [
+      { href: '/', label: 'Home' },
+      { href: '/posts', label: 'Posts' },
+      { href: '/blog', label: 'Blog' },
+      { href: '/authors', label: 'Authors' },
+    ]
+  );
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+  <link rel="icon" href={favicon} />
 </svelte:head>
-<TinaBridge />
-{@render children()}
+
+<div class="app-root" data-theme={themeColor}>
+  <TinaBridge />
+  <Header
+    name={header?.name || 'Tina Kitchen Sink'}
+    color={header?.color || 'default'}
+    {nav}
+    {themeColor}
+  />
+  <main class="site-main">
+    {@render children()}
+  </main>
+  <Footer social={footer?.social || []} />
+</div>
+
+<style>
+  .app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .site-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
