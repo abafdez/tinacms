@@ -73,7 +73,7 @@ const Post: Collection = {
       ...tagsFieldSchema,
       ui: {
         itemProps: (item: Record<string, unknown>) => {
-          return { label: item?.tag };
+          return { label: typeof item?.tag === 'string' ? item.tag : undefined };
         },
       },
     },
@@ -149,6 +149,27 @@ const Post: Collection = {
               buttonText: 'Notify Me',
             },
           },
+        },
+        {
+          name: 'pullQuote',
+          label: 'Pull Quote',
+          match: {
+            start: '{{%',
+            name: 'pull-quote',
+            end: '%}}',
+          },
+          fields: [
+            {
+              name: 'foo',
+              label: 'Foo',
+              type: 'string',
+            },
+            {
+              name: 'children',
+              label: 'Quote',
+              type: 'rich-text',
+            },
+          ],
         },
       ],
       isBody: true,

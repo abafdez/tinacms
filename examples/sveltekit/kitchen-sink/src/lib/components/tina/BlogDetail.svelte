@@ -7,6 +7,7 @@
   import { tinaField } from '@tinacms/sveltekit';
   import { subscribeToTinaData, type QueryResult } from '@tinacms/sveltekit/data';
   import { sanitizeImageSrc, formatDate } from '#lib/utils.ts';
+  import { customComponents } from '#lib/components/markdown/index.ts';
 
   let {
     query,
@@ -102,7 +103,7 @@
 
     <Container width="small" size="large">
       <div class="blog-body" data-tina-field={tinaField(blog, '_body')}>
-        <TinaMarkdown content={blog._body} />
+        <TinaMarkdown content={blog._body} components={customComponents} />
       </div>
     </Container>
   </Section>

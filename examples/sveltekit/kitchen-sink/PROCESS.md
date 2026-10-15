@@ -112,3 +112,75 @@ In SvelteKit 3, the legacy `$lib` alias is deprecated in favor of Node/Vite stan
 
 **Rule**: All internal module imports must use `#lib/*` instead of `$lib/*`.
 
+---
+
+## 6. Shared Media & Static Assets (`localContentPath` & `examples/shared`)
+
+All kitchen-sink examples share content and media located in `examples/shared/`.
+- Markdown/MDX content lives in `examples/shared/content/` (referenced via `localContentPath: "../../../shared"`).
+- Media assets live in `examples/shared/public/uploads` and `examples/shared/public/blocks`.
+
+### SvelteKit Static Mapping
+Frameworks like Next.js and Astro serve public assets from `public/`, whereas **SvelteKit serves static assets from `static/`**.
+
+1. **Symlinks**:
+   In `examples/sveltekit/kitchen-sink/static/`:
+   ```bash
+   ln -s ../../../shared/public/uploads uploads
+   ln -s ../../../shared/public/blocks blocks
+   ```
+2. **Tina Media Configuration (`tina/config.ts`)**:
+   `media.tina.publicFolder` must be set to `"static"` (matching SvelteKit's static folder, not `"public"`):
+   ```ts
+   media: {
+     tina: {
+       mediaRoot: "uploads",
+       publicFolder: "static",
+     },
+   }
+   ```
+   This ensures Tina's media manager looks in `static/uploads` (which resolves via symlink to `examples/shared/public/uploads`), and Vite/SvelteKit serves them at `/uploads/*` and `/blocks/*`.
+
+---
+
+## 7. Nested Dynamic Routes (`[...slug]` vs `[slug]`)
+
+CMS documents can be nested in arbitrary subdirectories (e.g. `content/posts/my-folder/my-folder-b/deeply-nested.md`).
+
+1. **Catch-All Parameter**: SvelteKit routes must use rest parameters (`src/routes/posts/[...slug]/`) rather than single-segment parameters (`[slug]`), otherwise multi-segment URLs trigger an instant 404.
+2. **Breadcrumb Slugs**:
+   - `_sys.filename` contains only the base filename (e.g. `"deeply-nested"`).
+   - `_sys.breadcrumbs.join('/')` contains the full relative path (e.g. `"my-folder/my-folder-b/deeply-nested"`).
+   - Server loads query `relativePath: `${event.params.slug}.md``.
+
+---
+
+## 8. Custom Markdown & Shortcode Components
+
+TinaCMS supports rich-text templates with MDX (`<DateTime />`) or Hugo-style shortcodes (`{{% pull-quote %}}`):
+
+1. **Schema Matchers (`post.tsx`)**:
+   Shortcodes must declare a `match` object on the template:
+   ```ts
+   {
+     name: 'pullQuote',
+     match: { start: '{{%', name: 'pull-quote', end: '%}}' },
+     fields: [...]
+   }
+   ```
+2. **Component Registry (`src/lib/components/markdown/index.ts`)**:
+   Custom Svelte components (`DateTime.svelte`, `BlockQuote.svelte`, `PullQuote.svelte`, `NewsletterSignup.svelte`) are mapped in a dictionary:
+   ```ts
+   export const customComponents = {
+     DateTime,
+     BlockQuote,
+     pullQuote: PullQuote,
+     'pull-quote': PullQuote,
+     NewsletterSignup,
+   };
+   ```
+3. **Usage in `<TinaMarkdown>`**:
+   Pass `components={customComponents}` to `<TinaMarkdown content={post._body || post.body} components={customComponents} />`.
+
+
+

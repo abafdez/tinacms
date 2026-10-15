@@ -3,7 +3,7 @@
   import Container from '#lib/components/layout/Container.svelte';
   import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
   import Card from '#lib/components/ui/Card.svelte';
-  import { formatDate, sanitizeImageSrc } from '#lib/utils';
+  import { formatDate, sanitizeImageSrc } from '#lib/utils.ts';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();

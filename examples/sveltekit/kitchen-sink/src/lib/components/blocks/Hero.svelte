@@ -4,7 +4,7 @@
   import Actions from '../layout/Actions.svelte';
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
   import { tinaField } from '@tinacms/sveltekit';
-  import { sanitizeImageSrc } from '#lib/utils';
+  import { sanitizeImageSrc } from '#lib/utils.ts';
 
   let { data }: { data: any } = $props();
 
