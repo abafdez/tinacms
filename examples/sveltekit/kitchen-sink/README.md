@@ -30,7 +30,8 @@ The preview updates as you type, before you save.
 |---|---|---|
 | `pnpm dev` | Vite dev server + local Tina | Editing content with visual editing |
 | `pnpm build` | `build/` (`adapter-node`) | A Node server: prerendered pages plus the live-edit endpoint |
-| `pnpm preview` | Runs `build/` | Trying the Node build locally |
+| `pnpm preview` | Serves `build/` with `vite preview` | Trying the Node build locally, including live editing |
+| `pnpm start` | Runs `build/` with Node | Production. Behind HTTPS, or set `PROTOCOL_HEADER` (see below) |
 | `pnpm build:static` | `build-static/` (`adapter-static`) | Static hosting: public pages only, no admin, no live editing |
 | `pnpm build:pages` | `build-static/` + `admin/` | GitHub Pages with TinaCloud. See [DEPLOY.md](DEPLOY.md) |
 | `pnpm preview:static` | Serves `build-static/` | Trying the static build locally |
@@ -95,7 +96,7 @@ into `examples/shared/public/`.
 `[...slug]` and links are built from `_sys.breadcrumbs.join('/')`.
 `_sys.filename` alone would drop the folders.
 
-**Editable fields.** Each page subscribes with `subscribeToTinaData` and marks
+**Editable fields.** Each page reads live data with `useTina(() => query)` and marks
 elements with `data-tina-field={tinaField(doc, 'field')}`. The
 `PageRenderer`/`*Detail` components in `src/lib/components/tina/` show the
 pattern.
@@ -123,9 +124,15 @@ component has a scoped `<style>` block.
    `data-tina-form` and should not load `/admin/bridge.js`.
 3. After `pnpm build:static`: `build-static/index.html` exists and
    `build-static/admin/` does not.
-4. After `pnpm build && pnpm preview`: in the admin, the preview should POST to
-   `/tina-island/post?slug=…` and update as you edit. This hasn't been checked
-   yet.
+4. After `pnpm build && pnpm preview`: in the admin, the preview POSTs to
+   `/tina-island/post?slug=…`, gets 200, and updates as you edit.
+
+**`pnpm start` over plain HTTP.** adapter-node 6 assumes `https` unless
+`PROTOCOL_HEADER` names a header your proxy sets (e.g. `x-forwarded-proto`).
+Over plain `http://localhost` the island endpoint then sees a different origin
+than the browser sends and answers 403, so live editing fails. Use
+`pnpm preview` locally; in production, serve over HTTPS or set
+`PROTOCOL_HEADER`.
 
 `pnpm check` also lists errors from `tina/__generated__/` and the core
 `tinacms` sources. Those come from the tsconfig scope, not this app's code.

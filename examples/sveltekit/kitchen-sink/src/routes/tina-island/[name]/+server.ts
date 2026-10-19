@@ -14,7 +14,9 @@ export const POST = experimental_createIslandHandler({
 			const slug = params.get('slug');
 			if (
 				!slug ||
-				!slug.split('/').every((part) => /^[A-Za-z0-9_-]+$/.test(part))
+				!slug
+					.split('/')
+					.every((part) => /^[A-Za-z0-9_.-]+$/.test(part) && part !== '.' && part !== '..')
 			) {
 				throw error(404, 'Post not found');
 			}

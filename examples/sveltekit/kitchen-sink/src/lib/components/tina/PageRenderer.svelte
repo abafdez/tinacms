@@ -1,20 +1,14 @@
 <script lang="ts">
   import Blocks from '../blocks/Blocks.svelte';
   import { tinaField } from '@tinacms/sveltekit';
-  import { subscribeToTinaData, type QueryResult } from '@tinacms/sveltekit/data';
+  import type { QueryResult } from '@tinacms/sveltekit/data';
+  import { useTina } from '@tinacms/sveltekit/use-tina';
 
   let { query }: { query: QueryResult<any> } = $props();
-  let preview = $state<{ id: string; data: any }>();
-
-  $effect(() => {
-    const currentQuery = query;
-    return subscribeToTinaData(currentQuery, (data) => {
-      preview = { id: currentQuery.id, data };
-    });
-  });
+  const tina = useTina(() => query);
 
   const page = $derived(
-    (preview?.id === query.id ? preview.data : query.data)?.page
+    tina.data?.page
   );
 </script>
 

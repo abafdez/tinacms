@@ -5,7 +5,8 @@
   import NoData from '../ui/NoData.svelte';
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
   import { tinaField } from '@tinacms/sveltekit';
-  import { subscribeToTinaData, type QueryResult } from '@tinacms/sveltekit/data';
+  import type { QueryResult } from '@tinacms/sveltekit/data';
+  import { useTina } from '@tinacms/sveltekit/use-tina';
   import { sanitizeImageSrc, formatDate, withBase } from '#lib/utils.ts';
   import { customComponents } from '#lib/components/markdown/index.ts';
 
@@ -17,17 +18,10 @@
     formattedDate?: string;
   } = $props();
 
-  let preview = $state<{ id: string; data: any }>();
-
-  $effect(() => {
-    const currentQuery = query;
-    return subscribeToTinaData(currentQuery, (data) => {
-      preview = { id: currentQuery.id, data };
-    });
-  });
+  const tina = useTina(() => query);
 
   const post = $derived(
-    (preview?.id === query.id ? preview.data : query.data)?.post
+    tina.data?.post
   );
 
   const formattedDate = $derived(
