@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad, EntryGenerator } from './$types';
 import { requestWithMetadata } from '@tinacms/sveltekit/data';
 import client from '#tina/__generated__/client.ts';
+import { isFileLink } from '#lib/utils.ts';
 
 export const prerender = true;
 
@@ -16,6 +17,8 @@ export const entries: EntryGenerator = async () => {
 };
 
 export const load: PageServerLoad = async (event) => {
+  if (isFileLink(event.params.urlSegments)) error(404, 'Page not found');
+
   try {
     const pageQuery = await requestWithMetadata(
       client.queries.page({ relativePath: `${event.params.urlSegments}.md` }),

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { withBase } from '#lib/utils.ts';
   import Section from '#lib/components/layout/Section.svelte';
   import Container from '#lib/components/layout/Container.svelte';
   import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
@@ -18,7 +19,7 @@
 
     <div class="posts-grid">
       {#each data.posts ?? [] as post (post.slug)}
-        <a href="/posts/{post.slug}" class="post-card-link">
+        <a href={withBase(`/posts/${post.slug}`)} class="post-card-link">
           <Card class="post-card">
             <h2 class="post-card-title">{post.title}</h2>
             <span class="read-more">Read post &rarr;</span>

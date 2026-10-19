@@ -3,6 +3,7 @@
   import Container from '../layout/Container.svelte';
   import Actions from '../layout/Actions.svelte';
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { customComponents } from '../markdown/index.ts';
   import { tinaField } from '@tinacms/sveltekit';
   import { sanitizeImageSrc } from '#lib/utils.ts';
 
@@ -29,7 +30,7 @@
 
       {#if data.text}
         <div data-tina-field={tinaField(data, 'text')} class="hero-text {isPrimary ? 'text-primary-mode' : ''}">
-          <TinaMarkdown content={data.text} />
+          <TinaMarkdown content={data.text} components={customComponents} />
         </div>
       {/if}
 

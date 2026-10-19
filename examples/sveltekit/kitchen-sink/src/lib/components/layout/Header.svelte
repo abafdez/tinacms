@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
   import Container from './Container.svelte';
   import Icon from './Icon.svelte';
 
@@ -26,7 +27,7 @@
 <header class="site-header {isPrimary ? 'header-primary' : 'header-default'}">
   <Container size="custom" class="header-container">
     <div class="header-inner">
-      <a href="/" class="brand-link">
+      <a href={withBase('/')} class="brand-link">
         <Icon
           data={{ name: 'Tina', style: 'float', size: 'small' }}
           parentThemeColor={themeColor}
@@ -39,7 +40,8 @@
       <nav class="desktop-nav">
         {#each nav ?? [] as item, i (i)}
           {#if item}
-            <a href={item.href || '/'} class="nav-link {isPrimary ? 'nav-link-primary' : ''}">
+            {@const href = sanitizeHref(item.href, withBase('/'))}
+            <a {href} data-sveltekit-reload={isFileLink(href) || undefined} class="nav-link {isPrimary ? 'nav-link-primary' : ''}">
               {item.label}
             </a>
           {/if}
@@ -68,8 +70,10 @@
       <nav class="mobile-drawer">
         {#each nav ?? [] as item, i (i)}
           {#if item}
+            {@const href = sanitizeHref(item.href, withBase('/'))}
             <a
-              href={item.href || '/'}
+              {href}
+              data-sveltekit-reload={isFileLink(href) || undefined}
               class="mobile-nav-link"
               onclick={() => (mobileNavOpen = false)}
             >

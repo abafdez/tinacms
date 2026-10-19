@@ -3,7 +3,7 @@
   import Container from '#lib/components/layout/Container.svelte';
   import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
   import Card from '#lib/components/ui/Card.svelte';
-  import { sanitizeImageSrc } from '#lib/utils.ts';
+  import { sanitizeImageSrc, withBase } from '#lib/utils.ts';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
@@ -20,7 +20,7 @@
     <div class="authors-grid">
       {#each data.authors ?? [] as author (author.slug)}
         {@const avatarSrc = author.avatar ? sanitizeImageSrc(author.avatar) : ''}
-        <a href="/authors/{author.slug}" class="author-card-link">
+        <a href={withBase(`/authors/${author.slug}`)} class="author-card-link">
           <Card class="author-card">
             {#if avatarSrc}
               <img src={avatarSrc} alt={author.name} class="author-avatar" width="80" height="80" />

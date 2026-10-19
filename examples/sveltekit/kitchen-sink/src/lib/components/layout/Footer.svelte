@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { withBase } from '#lib/utils.ts';
   import Container from './Container.svelte';
   import Icon from './Icon.svelte';
 
@@ -17,7 +18,7 @@
 <footer class="site-footer">
   <Container size="small" class="footer-container">
     <div class="footer-inner">
-      <a href="/" class="footer-brand" aria-label="Home">
+      <a href={withBase('/')} class="footer-brand" aria-label="Home">
         <Icon data={{ name: 'Tina', style: 'float', size: 'small' }} class="footer-icon" />
       </a>
 

@@ -6,7 +6,7 @@
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
   import { tinaField } from '@tinacms/sveltekit';
   import { subscribeToTinaData, type QueryResult } from '@tinacms/sveltekit/data';
-  import { sanitizeImageSrc, formatDate } from '#lib/utils.ts';
+  import { sanitizeImageSrc, formatDate, withBase } from '#lib/utils.ts';
   import { customComponents } from '#lib/components/markdown/index.ts';
 
   let {
@@ -65,7 +65,7 @@
           {/if}
           <div class="author-meta">
             {#if authorFilename}
-              <a href="/authors/{authorFilename}" class="author-name-link">
+              <a href={withBase(`/authors/${authorFilename}`)} class="author-name-link">
                 {post.author.name}
               </a>
             {:else}

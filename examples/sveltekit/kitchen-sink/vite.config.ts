@@ -6,6 +6,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { tinaVitePlugin } from '@tinacms/sveltekit/vite';
 
 const isStaticBuild = process.env.TINA_STATIC_BUILD === 'true';
+// Set by the GitHub Pages workflow, e.g. "/my-repo"; empty for root deployments.
+const basePath = (process.env.BASE_PATH ?? '') as '' | `/${string}`;
 
 export default defineConfig({
 	plugins: [
@@ -15,10 +17,12 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
+			paths: { base: basePath },
 			adapter: isStaticBuild
 				? adapterStatic({
 						pages: 'build-static',
 						assets: 'build-static',
+						fallback: '404.html',
 						strict: false
 					})
 				: adapterNode()

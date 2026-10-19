@@ -2,6 +2,7 @@
   import Section from '../layout/Section.svelte';
   import Container from '../layout/Container.svelte';
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+  import { customComponents } from '../markdown/index.ts';
   import { tinaField } from '@tinacms/sveltekit';
 
   let { data }: { data: any } = $props();
@@ -10,7 +11,7 @@
 <Section color={data.color}>
   <Container size="large" width="medium" class="content-block-container">
     <div data-tina-field={tinaField(data, 'body')} class="content-body">
-      <TinaMarkdown content={data.body} />
+      <TinaMarkdown content={data.body} components={customComponents} />
     </div>
   </Container>
 </Section>

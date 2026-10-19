@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
   import { tinaField } from '@tinacms/sveltekit';
 
   export interface NavAction {
@@ -24,8 +25,10 @@
     {#if action}
       {@const isButton = action.type === 'button'}
       {@const isPrimary = parentColor === 'primary'}
+      {@const href = sanitizeHref(action.link, withBase('/'))}
       <a
-        href={action.link || '/'}
+        {href}
+        data-sveltekit-reload={isFileLink(href) || undefined}
         data-tina-field={tinaField(action as Record<string, unknown>)}
         class="action-item {isButton ? 'action-button' : 'action-link'} {isPrimary ? 'primary-mode' : 'default-mode'}"
       >

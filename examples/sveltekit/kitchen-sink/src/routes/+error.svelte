@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { withBase } from '#lib/utils.ts';
   import { page } from '$app/state';
   import Container from '#lib/components/layout/Container.svelte';
 </script>
@@ -11,7 +12,7 @@
   <div class="error-page">
     <h1>{page.status}</h1>
     <p>{page.status === 404 ? "Sorry, we couldn't find that page." : page.error?.message}</p>
-    <a href="/">Return home</a>
+    <a href={withBase('/')}>Return home</a>
   </div>
 </Container>
 

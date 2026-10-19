@@ -3,7 +3,7 @@
   import Container from '#lib/components/layout/Container.svelte';
   import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
   import Card from '#lib/components/ui/Card.svelte';
-  import { formatDate, sanitizeImageSrc } from '#lib/utils.ts';
+  import { formatDate, sanitizeImageSrc, withBase } from '#lib/utils.ts';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
@@ -20,7 +20,7 @@
     <div class="blogs-grid">
       {#each data.blogs ?? [] as blog (blog.slug)}
         {@const heroSrc = blog.heroImage ? sanitizeImageSrc(blog.heroImage) : ''}
-        <a href="/blog/{blog.slug}" class="blog-card-link">
+        <a href={withBase(`/blog/${blog.slug}`)} class="blog-card-link">
           <Card class="blog-card">
             {#if heroSrc}
               <div class="blog-thumb-wrap">

@@ -32,6 +32,7 @@ The preview updates as you type, before you save.
 | `pnpm build` | `build/` (`adapter-node`) | A Node server: prerendered pages plus the live-edit endpoint |
 | `pnpm preview` | Runs `build/` | Trying the Node build locally |
 | `pnpm build:static` | `build-static/` (`adapter-static`) | Static hosting: public pages only, no admin, no live editing |
+| `pnpm build:pages` | `build-static/` + `admin/` | GitHub Pages with TinaCloud. See [DEPLOY.md](DEPLOY.md) |
 | `pnpm preview:static` | Serves `build-static/` | Trying the static build locally |
 | `pnpm check` | — | Type-checking with `svelte-check` |
 

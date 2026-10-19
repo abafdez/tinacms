@@ -1,3 +1,20 @@
+import { resolve } from '$app/paths';
+
+/** Prefixes root-relative paths with the deployment base path (e.g. GitHub Pages `/<repo>`). */
+export function withBase(path: string): string {
+  if (!path.startsWith('/') || path.startsWith('//')) return path;
+  return (resolve as (pathname: string) => string)(path);
+}
+
+/**
+ * True for links to files such as `/admin/index.html`. These are not app routes, so
+ * they need a full page load instead of SvelteKit's client-side navigation.
+ */
+export function isFileLink(href: string): boolean {
+  const path = href.split(/[?#]/)[0];
+  return /\.[a-z0-9]+$/i.test(path.slice(path.lastIndexOf('/') + 1));
+}
+
 export function cn(...inputs: (string | boolean | undefined | null)[]): string {
   return inputs.filter(Boolean).join(' ');
 }
@@ -24,7 +41,7 @@ export function sanitizeHref(value: unknown, fallback = '#'): string {
     trimmed.startsWith('../') ||
     trimmed.startsWith('#')
   ) {
-    return trimmed;
+    return trimmed.startsWith('/') ? withBase(trimmed) : trimmed;
   }
   try {
     const url = new URL(trimmed);
@@ -53,7 +70,7 @@ export function sanitizeImageSrc(src: unknown): string {
     trimmed.startsWith('../') ||
     (trimmed.startsWith('/') && !trimmed.startsWith('//'))
   ) {
-    return trimmed;
+    return withBase(trimmed);
   }
   try {
     const url = new URL(trimmed);

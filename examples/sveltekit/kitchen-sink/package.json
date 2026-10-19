@@ -7,6 +7,7 @@
 		"dev": "tinacms dev -c \"vite dev\"",
 		"build": "TINA_PUBLIC_IS_LOCAL=true tinacms build --local --skip-cloud-checks -c \"TINA_PUBLIC_IS_LOCAL=true vite build\"",
 		"build:static": "TINA_STATIC_BUILD=true TINA_PUBLIC_IS_LOCAL=true tinacms build --local --skip-cloud-checks -c \"TINA_STATIC_BUILD=true TINA_PUBLIC_IS_LOCAL=true vite build\" && node -e \"require('node:fs').rmSync('build-static/admin', { recursive: true, force: true })\"",
+		"build:pages": "TINA_STATIC_BUILD=true tinacms build -c \"TINA_STATIC_BUILD=true vite build\"",
 		"preview": "node build",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

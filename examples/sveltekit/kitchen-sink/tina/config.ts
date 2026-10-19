@@ -18,12 +18,14 @@ const branch =
 
 export default defineConfig({
   branch,
-  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
+  clientId: process.env.TINA_CLIENT_ID,
   token: process.env.TINA_TOKEN,
   localContentPath: "../../../shared",
   build: {
     outputFolder: "admin",
     publicFolder: "static",
+    // Serves the admin under the GitHub Pages project path, e.g. "my-repo".
+    basePath: process.env.BASE_PATH?.replace(/^\/+|\/+$/g, ""),
   },
   // Disable telemetry to avoid sending any data to Tina during development
   telemetry: "disabled",
