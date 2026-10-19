@@ -19,6 +19,11 @@
     return (content.children ?? []) as TinaRichTextNode[];
   });
 
+  // The editor sends newly typed leaves as `{ text }` without `type: 'text'`.
+  function isLeaf(node: TinaRichTextNode): boolean {
+    return typeof (node as { text?: unknown }).text === 'string';
+  }
+
   function tableRows(node: TableElement): TableRowElement[] {
     return node.children ?? [];
   }
@@ -44,7 +49,7 @@
 </script>
 
 {#snippet renderNodes(items: TinaRichTextNode[])}
-  {#each items as node, index (`${node.type}-${index}`)}
+  {#each items as node, index (`${node.type ?? 'text'}-${index}`)}
     {@render renderNode(node)}
   {/each}
 {/snippet}
@@ -83,8 +88,8 @@
 
 {#snippet renderNode(node: TinaRichTextNode)}
   {@const Override = components[node.type]}
-  {#if node.type === 'text'}
-    {@render renderLeaf(node)}
+  {#if node.type === 'text' || isLeaf(node)}
+    {@render renderLeaf(node as TextElement)}
   {:else if ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'lic', 'blockquote'].includes(node.type)}
     {@render renderContainer(node as TinaRichTextNode & { children?: TinaRichTextNode[] }, components)}
   {:else if node.type === 'a'}

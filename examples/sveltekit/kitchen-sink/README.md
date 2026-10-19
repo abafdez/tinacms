@@ -1,63 +1,130 @@
-# sv
+# TinaCMS SvelteKit kitchen-sink
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A SvelteKit 3 + Svelte 5 site with TinaCMS visual editing, built on
+[`@tinacms/sveltekit`](../../../packages/@tinacms/sveltekit/README.md). It
+implements the same content model as the other kitchen-sink examples (Next.js
+is the reference) and reads the shared content in `examples/shared/`.
 
-## Creating a project
+## Run it
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+This example uses workspace packages, so clone the whole monorepo.
 
 ```sh
-# recreate this project
-pnpm dlx sv@1.1.1 create --template minimal --types ts --add vitest="usages:unit,component" --install pnpm examples/sveltekit-demo/kitchen-sink
+# from the monorepo root
+pnpm install
+pnpm build            # builds the TinaCMS packages
+
+cd examples/sveltekit/kitchen-sink
+pnpm dev
 ```
 
-## Adding features
+- Site: <http://localhost:5173>
+- Tina admin: <http://localhost:5173/admin/index.html>
 
-Add features to your project with `sv add`:
+Open a page from the admin, click any text to select its field, and edit it.
+The preview updates as you type, before you save.
 
-```sh
-npx sv add
+## Scripts
+
+| Command | Output | Use it for |
+|---|---|---|
+| `pnpm dev` | Vite dev server + local Tina | Editing content with visual editing |
+| `pnpm build` | `build/` (`adapter-node`) | A Node server: prerendered pages plus the live-edit endpoint |
+| `pnpm preview` | Runs `build/` | Trying the Node build locally |
+| `pnpm build:static` | `build-static/` (`adapter-static`) | Static hosting: public pages only, no admin, no live editing |
+| `pnpm preview:static` | Serves `build-static/` | Trying the static build locally |
+| `pnpm check` | — | Type-checking with `svelte-check` |
+
+The build scripts run `vite build` *through* `tinacms build -c` so Tina's local
+GraphQL server stays up while SvelteKit prerenders. `TINA_PUBLIC_IS_LOCAL=true`
+selects the local client; `TINA_STATIC_BUILD=true` selects `adapter-static`.
+
+## Routes
+
+| URL | Content | Files |
+|---|---|---|
+| `/` | `pages/home.md` (blocks) | `src/routes/+page.*` |
+| `/<page>` | Other page documents | `src/routes/[...urlSegments]/` |
+| `/posts`, `/posts/<a/b/c>` | Posts, including nested folders | `src/routes/posts/` (`[...slug]`) |
+| `/blog`, `/blog/<slug>` | Blog posts | `src/routes/blog/` |
+| `/authors`, `/authors/<slug>` | Authors | `src/routes/authors/` |
+| Any unknown URL | 404 page | `src/routes/+error.svelte` |
+| `POST /tina-island/<name>` | Live-edit endpoint for prerendered pages | `src/routes/tina-island/[name]/+server.ts` |
+
+Global settings (header, footer, theme) load in `src/routes/+layout.server.ts`.
+Every route is prerendered (`+layout.ts`); dynamic routes list their pages in
+`entries()`.
+
+## Project layout
+
+```
+tina/
+  config.ts             Tina config (content path, media, collections)
+  collections/          Post, Blog, Author, Page, Global, Tag schemas
+  __generated__/        Generated client and types (don't edit)
+src/
+  hooks.server.ts       sequence(tinaHandle)
+  routes/               See the routes table
+  lib/
+    styles/theme.css    Design tokens as CSS custom properties
+    utils.ts            URL sanitizers, date formatting
+    components/
+      layout/           Header, Footer, Container, Section, Icon, Actions
+      blocks/           Hero, Features, CTA, Testimonial, Content, Blocks
+      tina/             PageRenderer, PostDetail, BlogDetail, AuthorDetail
+      markdown/         Custom rich-text components (see below)
+      ui/               GradientTitle, Badge, Card, NoData
+static/
+  uploads -> ../../../shared/public/uploads   (symlink)
+  blocks  -> ../../../shared/public/blocks    (symlink)
 ```
 
-For example, to add Tailwind CSS:
+## How things are wired
 
-```sh
-npx sv add tailwindcss
-```
+**Shared content and media.** `tina/config.ts` sets `localContentPath` to
+`examples/shared`. SvelteKit serves assets from `static/` rather than
+`public/`, so media is configured with `publicFolder: "static"` and
+`mediaRoot: "uploads"`, and `static/uploads` and `static/blocks` are symlinks
+into `examples/shared/public/`.
 
-## Developing
+**Imports.** Internal imports use package subpath imports defined in
+`package.json` (`#lib/*`, `#tina/*`, `#content/*`) instead of `$lib`.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+**Nested documents.** Posts can live in subfolders, so the route is
+`[...slug]` and links are built from `_sys.breadcrumbs.join('/')`.
+`_sys.filename` alone would drop the folders.
 
-```sh
-npm run dev
+**Editable fields.** Each page subscribes with `subscribeToTinaData` and marks
+elements with `data-tina-field={tinaField(doc, 'field')}`. The
+`PageRenderer`/`*Detail` components in `src/lib/components/tina/` show the
+pattern.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+**Custom rich-text components.** MDX components and shortcodes are mapped in
+`src/lib/components/markdown/index.ts` and passed to
+`<TinaMarkdown components={customComponents} />`:
 
-## Building
+| Template | Component | Syntax |
+|---|---|---|
+| `DateTime` | `DateTime.svelte` | MDX `<DateTime />` |
+| `BlockQuote` | `BlockQuote.svelte` | MDX |
+| `pullQuote` | `PullQuote.svelte` | Shortcode `{{% pull-quote %}}` (needs a `match` in `post.tsx`) |
+| `NewsletterSignup` | `NewsletterSignup.svelte` | MDX |
 
-To create a production version of your app:
+**Styling.** Plain CSS, no Tailwind: tokens live in `theme.css`,
+`<html data-theme="blue|teal|green|red">` switches the palette, and each
+component has a scoped `<style>` block.
 
-```sh
-npm run build
-```
+## Checking it
 
-You can preview the production build with `npm run preview`.
+1. Run `pnpm dev`, open `/posts/hello-world` from the admin, click the title
+   and body, and type without saving. The preview should follow along.
+2. Open the same URL outside the admin. The HTML should contain no
+   `data-tina-form` and should not load `/admin/bridge.js`.
+3. After `pnpm build:static`: `build-static/index.html` exists and
+   `build-static/admin/` does not.
+4. After `pnpm build && pnpm preview`: in the admin, the preview should POST to
+   `/tina-island/post?slug=…` and update as you edit. This hasn't been checked
+   yet.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-
-
-## Add TinaCMS!
-
-This repo contains the basic tinacms integration. and basic files to test the integration.
-If downloaded from githb repo needs to be downloaded with the full monorepo.
+`pnpm check` also lists errors from `tina/__generated__/` and the core
+`tinacms` sources. Those come from the tsconfig scope, not this app's code.
