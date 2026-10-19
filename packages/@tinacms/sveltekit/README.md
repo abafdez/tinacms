@@ -22,12 +22,14 @@ dev server (`tinacms dev -c "vite dev"`). The Tina admin loads your site in an
 iframe:
 
 1. `tinaHandle` (server hook) detects editor-iframe requests, collects every
-   Tina form queried during the render, and injects the form payloads and the
-   bridge bootstrap into the HTML stream.
-2. `TinaBridge` (root layout) starts the bridge only inside the iframe and
-   refreshes forms after SvelteKit client-side navigation.
-3. `subscribeToTinaData` delivers unsaved sidebar edits (`updateData`
-   messages) to the page, so it re-renders without reloading.
+   Tina form queried during the render, and injects the form payloads into
+   the HTML stream (as `<template>` elements, which are valid in `<head>`).
+2. `TinaBridge` (root layout, **required**) starts the bridge only inside the
+   iframe, after hydration, and refreshes forms after client-side navigation.
+   The hook deliberately injects no bridge script: one that runs before Svelte
+   hydrates changes the DOM and causes a hydration mismatch.
+3. `useTina()` (built on `subscribeToTinaData`) delivers unsaved sidebar edits
+   (`updateData` messages) to the page, so it re-renders without reloading.
 4. `tinaField()` adds `data-tina-field` attributes so clicking an element
    focuses its field in the sidebar.
 
@@ -104,28 +106,17 @@ export const load = async (event) => ({
 });
 ```
 
-Subscribe in the page and mark editable elements. Keep the query result
-(including its `id`) for the subscription.
+In the page, get live data with `useTina()` and mark editable elements:
 
 ```svelte
 <script lang="ts">
   import { tinaField } from '@tinacms/sveltekit';
-  import { subscribeToTinaData } from '@tinacms/sveltekit/data';
+  import { useTina } from '@tinacms/sveltekit/use-tina';
   import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
 
   let { data } = $props();
-  let preview = $state<{ id: string; data: any }>();
-
-  $effect(() => {
-    const query = data.postQuery;
-    return subscribeToTinaData(query, (updated) => {
-      preview = { id: query.id, data: updated };
-    });
-  });
-
-  const post = $derived(
-    (preview?.id === data.postQuery.id ? preview.data : data.postQuery.data).post
-  );
+  const tina = useTina(() => data.postQuery);
+  const post = $derived(tina.data.post);
 </script>
 
 <h1 data-tina-field={tinaField(post, 'title')}>{post.title}</h1>
@@ -133,6 +124,59 @@ Subscribe in the page and mark editable elements. Keep the query result
   <TinaMarkdown content={post.body} />
 </div>
 ```
+
+### Why `useTina` exists
+
+Without it, every page that shows Tina data repeats the same ~10 lines:
+
+```ts
+let preview = $state<{ id: string; data: any }>();
+$effect(() => {
+  const query = data.postQuery;
+  return subscribeToTinaData(query, (updated) => {
+    preview = { id: query.id, data: updated };
+  });
+});
+const post = $derived(
+  (preview?.id === data.postQuery.id ? preview.data : data.postQuery.data).post
+);
+```
+
+Two parts of it are easy to get wrong when copied by hand:
+
+- **The `id` check.** SvelteKit reuses the page component when you navigate
+  between two posts. Without comparing ids, the new post briefly shows the
+  previous post's unsaved data.
+- **Reading `query` inside the `$effect`.** That's what makes the
+  subscription restart for the new page's form after navigation.
+
+`useTina()` keeps both in one tested place (`src/use-tina.svelte.ts`, covered
+by `use-tina.browser.test.ts`). It's the SvelteKit counterpart of `useTina` in
+`tinacms/dist/react`, so the call looks familiar to Tina users.
+
+### Rules and downsides
+
+- **Pass a getter, `useTina(() => data.postQuery)`, not the value.** Passing
+  `data.postQuery` reads it once, and the page stops following navigation.
+  This is the most common mistake, and TypeScript catches it because the
+  parameter is a function.
+- **Call it at component setup**, at the top level of `<script>`. It creates an
+  `$effect`, so it can't be called inside an event handler or a plain `.ts`
+  module.
+- **Read `tina.data`; don't destructure it.** `const { data } = useTina(...)`
+  copies the value once and loses reactivity. Use `$derived(tina.data.post)`.
+- **It ships as source, not compiled JS.** Runes only work after the Svelte
+  compiler runs, so `./use-tina` points at `src/use-tina.svelte.ts`, like the
+  `.svelte` components. The consuming app's Vite and Svelte plugin compile it,
+  which every SvelteKit app does anyway. Tools that read only `dist/` won't see
+  it.
+- **It's one more API to keep stable.** `subscribeToTinaData()` stays public
+  for code outside components and for layouts whose query can be missing (the
+  example's root layout uses it because the global query is optional).
+- **No extra behavior.** It doesn't load data, register forms or handle
+  click-to-focus. Those stay with `requestWithMetadata`, `tinaHandle` and
+  `TinaBridge`. Outside the Tina iframe the subscription does nothing, and
+  `tina.data` is just the server data.
 
 ## Rich text: `TinaMarkdown`
 
@@ -228,9 +272,21 @@ From the monorepo root:
 pnpm install
 pnpm --filter @tinacms/sveltekit test          # Vitest, server suite
 pnpm --filter @tinacms/sveltekit test-browser  # headless Chromium suite
+pnpm --filter @tinacms/sveltekit check         # svelte-check (.svelte and .svelte.ts files)
 pnpm --filter @tinacms/sveltekit types
 pnpm --filter @tinacms/sveltekit build
 ```
+
+Before packing or publishing, run `build` and **then** `types`. `build` writes
+placeholder `dist/*.d.ts` files (`export * from "../src/…"`) so dev mode can
+skip TypeScript. `types` replaces them with real declarations. A tarball packed
+after `build` alone makes consumers type-check this package's source with their
+own tsconfig, which fails (for example, without `@types/node`). Turbo's `types`
+task already runs after `build`.
+
+The `.svelte` components and `use-tina.svelte.ts` ship as source and are
+compiled by the consuming app. Tests are excluded from the tarball
+(`"!src/__tests__"` in `files`).
 
 The first browser run on a fresh machine needs
 `pnpm --filter @tinacms/sveltekit exec playwright install --with-deps chromium`.
@@ -241,6 +297,7 @@ Layout:
 |---|---|
 | `src/hooks.ts` | `tinaHandle`: form collection and HTML injection |
 | `src/data.ts` | `requestWithMetadata`, `subscribeToTinaData` |
+| `src/use-tina.svelte.ts` | `useTina()`: live data for components (shipped as source) |
 | `src/vite.ts` | `tinaVitePlugin`: bridge in dev and build |
 | `src/TinaBridge.svelte` | Iframe bootstrap and navigation refresh |
 | `src/TinaMarkdown.svelte` | Rich-text renderer |
@@ -270,16 +327,18 @@ Verified:
 - Dev iframe flow: field focus, live unsaved edits, navigation between
   posts, and plain visitor responses with no editor payload.
 - Both example builds (Node hybrid and static) complete.
-- 19 server tests and 2 browser tests pass.
+- Hybrid runtime (2026-10-19, Playwright): a prerendered post primes its island
+  (200), its form appears in the admin, and unsaved edits update the preview.
+  Dev: live title and rich text, click-to-focus, navigation, no console
+  warnings. Same-origin checks need the server to see the browser's protocol;
+  see the example README on `pnpm start` over plain HTTP.
+- 19 server tests and 3 browser tests pass; `svelte-check` reports no errors.
 
 Next:
-1. **Hybrid runtime check:** `pnpm build && pnpm preview` in the example. Open
-   a post from Tina, confirm the iframe POSTs to `/tina-island/post?slug=…`,
-   and that unsaved edits refresh the island. Keep the island API experimental
-   until this passes.
-2. **Publishing:** validate exports, declarations, and peer ranges, and do a
-   clean install outside the monorepo.
-3. **Content invalidation:** check whether Vite needs a watcher for content
+1. **Publishing:** done for a local tarball: installed in a standalone
+   SvelteKit 3 app, its build prerenders every component and `useTina`, and
+   `svelte-check` passes. Still to do: a changeset and the real npm release.
+2. **Content invalidation:** check whether Vite needs a watcher for content
    and routes created in Tina during dev.
 
 References: [Tina Astro visual editing](https://tina.io/docs/contextual-editing/astro),

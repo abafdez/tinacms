@@ -8,9 +8,6 @@ import {
 } from './internal/forms-store';
 
 const HEAD_CLOSE = '</head>';
-const BRIDGE_BOOTSTRAP =
-  '<script type="module">import{init}from"/admin/bridge.js";init();</script>';
-
 /**
  * SvelteKit server hook for Tina visual editing. Compose this with other
  * handles using `sequence` from `@sveltejs/kit/hooks`.
@@ -70,9 +67,11 @@ export const tinaHandle: Handle = async ({ event, resolve }) => {
 
 function renderInjection(locals: TinaLocals): string {
   const forms = sortByPriority(locals[TINA_FORMS] ?? [])
-    .map((form, index) => renderFormPayloadDiv(form, index === 0))
+    .map((form, index) => renderFormPayloadDiv(form, index === 0, 'template'))
     .join('');
-  return forms + BRIDGE_BOOTSTRAP;
+  // No bridge <script> here: TinaBridge starts it after hydration. Starting it from <head>
+  // lets it change the DOM before Svelte hydrates, which causes a hydration mismatch.
+  return forms;
 }
 
 export default tinaHandle;

@@ -3,9 +3,11 @@
     CodeBlockElement,
     CustomComponentsMap,
     MdxElement,
+    TableAlign,
     TableElement,
     TableRowElement,
     TextElement,
+    TinaComponent,
     TinaMarkdownProps,
     TinaRichTextNode,
   } from './types';
@@ -22,6 +24,11 @@
   // The editor sends newly typed leaves as `{ text }` without `type: 'text'`.
   function isLeaf(node: TinaRichTextNode): boolean {
     return typeof (node as { text?: unknown }).text === 'string';
+  }
+
+  // Overrides have different prop shapes; looked up by a runtime key they are untyped.
+  function override(key: string): TinaComponent | undefined {
+    return (components as Record<string, TinaComponent | undefined>)[key];
   }
 
   function tableRows(node: TableElement): TableRowElement[] {
@@ -75,7 +82,7 @@
 {/snippet}
 
 {#snippet renderContainer(node: TinaRichTextNode & { children?: TinaRichTextNode[] }, components: CustomComponentsMap)}
-  {@const Override = components[node.type]}
+  {@const Override = override(node.type)}
   {@const tag = node.type === 'lic' ? 'div' : node.type}
   {#if Override}
     <Override>{@render renderNodes(node.children ?? [])}</Override>
@@ -87,7 +94,7 @@
 {/snippet}
 
 {#snippet renderNode(node: TinaRichTextNode)}
-  {@const Override = components[node.type]}
+  {@const Override = override(node.type)}
   {#if node.type === 'text' || isLeaf(node)}
     {@render renderLeaf(node as TextElement)}
   {:else if ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'lic', 'blockquote'].includes(node.type)}
@@ -129,7 +136,7 @@
 {/snippet}
 
 {#snippet renderMdx(node: MdxElement)}
-  {@const Override = components[node.name]}
+  {@const Override = override(node.name)}
   {#if Override}
     <Override {...(node.props ?? {})} />
   {:else if node.name === 'table'}
@@ -190,7 +197,7 @@
 
 {#snippet renderLegacyTable(node: MdxElement)}
   {@const props = node.props ?? {}}
-  {@const table = props as typeof props & { firstRowHeader?: boolean; align?: string[]; tableRows?: { tableCells?: { value: unknown }[] }[] }}
+  {@const table = props as typeof props & { firstRowHeader?: boolean; align?: TableAlign[]; tableRows?: { tableCells?: { value: unknown }[] }[] }}
   {@const rows = table.tableRows ?? []}
   {@const header = table.firstRowHeader ? rows[0] : undefined}
   {@const body = table.firstRowHeader ? rows.slice(1) : rows}

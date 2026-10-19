@@ -67,7 +67,12 @@ describe('tinaHandle', () => {
     expect(html).toContain('</head><body>Content</body></html>');
     expect(html.indexOf(primaryId)).toBeLessThan(html.indexOf(secondaryId));
     expect(html).toContain('data-tina-primary');
-    expect(html).toContain('/admin/bridge.js');
+    expect(html).not.toContain('/admin/bridge.js');
+    // A <div> inside <head> makes the parser close the head early, moving later head
+    // nodes into <body> and breaking Svelte's head hydration in the editor.
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head).not.toMatch(/<div\b/);
+    expect(head).toContain('<template data-tina-form=');
     expect(response.headers.get('content-length')).toBeNull();
     expect(response.headers.get('set-cookie')).toContain(`${EDIT_COOKIE}=1`);
   });
@@ -162,7 +167,6 @@ describe('tinaHandle', () => {
     expect(firstChunk.done).toBe(false);
     const html = new TextDecoder().decode(firstChunk.value);
     expect(html).toContain('data-tina-form=');
-    expect(html).toContain('/admin/bridge.js');
     expect(html).toContain('<body>First chunk');
     await reader.cancel();
   });

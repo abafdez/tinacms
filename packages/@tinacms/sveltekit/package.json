@@ -7,6 +7,7 @@
   "files": [
     "package.json",
     "src",
+    "!src/__tests__",
     "dist"
   ],
   "exports": {
@@ -46,6 +47,11 @@
       "types": "./dist/vite.d.ts",
       "default": "./dist/vite.js"
     },
+    "./use-tina": {
+      "types": "./src/use-tina.svelte.ts",
+      "svelte": "./src/use-tina.svelte.ts",
+      "default": "./src/use-tina.svelte.ts"
+    },
     "./TinaBridge.svelte": {
       "svelte": "./src/TinaBridge.svelte",
       "default": "./src/TinaBridge.svelte"
@@ -82,6 +88,7 @@
     ]
   },
   "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json",
     "types": "tsc",
     "build": "tinacms-scripts build",
     "test": "vitest run",
@@ -103,6 +110,7 @@
     "@tinacms/scripts": "workspace:*",
     "@types/node": "^22.13.1",
     "svelte": "^5.57.1",
+    "svelte-check": "^4.6.0",
     "typescript": "^6.0.0",
     "vite": "^8.0.12",
     "vitest": "^4.1.8",

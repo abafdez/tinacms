@@ -35,11 +35,13 @@ export function sortByPriority(forms: CollectedForm[]): CollectedForm[] {
   );
 }
 
+// Use `template` inside <head>: a <div> there ends the head early and breaks head hydration.
 export function renderFormPayloadDiv(
   form: CollectedForm,
-  primary: boolean
+  primary: boolean,
+  tag: 'div' | 'template' = 'div'
 ): string {
-  return `<div data-tina-form="${escapeAttr(JSON.stringify(form))}"${
+  return `<${tag} data-tina-form="${escapeAttr(JSON.stringify(form))}"${
     primary ? ' data-tina-primary' : ''
-  } hidden></div>`;
+  } hidden></${tag}>`;
 }
