@@ -1,21 +1,21 @@
 packages:
-  - packages/*
-  - packages/@tinacms/*
-  - packages/v4/@tinacms/*
-  - packages/v4/examples/*
-  - examples/*/*
-  - e2e/*
-  - playwright/*
+    - packages/*
+    - packages/@tinacms/*
+    - packages/v4/@tinacms/*
+    - packages/v4/examples/*
+    - examples/*/*
+    - e2e/*
+    - playwright/*
 # Supply-chain cooldown: don't install registry releases newer than 1 day,
 # giving time to react to a compromised/yanked package. Our own packages are
 # excluded so freshly published @tinacms releases aren't blocked.
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-  - "@tinacms/*"
-  - tinacms
-  - tinacms-*
-  - create-tina-app
-  - next-tinacms-*
+    - "@tinacms/*"
+    - tinacms
+    - tinacms-*
+    - create-tina-app
+    - next-tinacms-*
 overrides:
     qs: ^6.15.2
     "@clerk/clerk-js>react": 19.2.3
@@ -25,17 +25,17 @@ overrides:
     "js-yaml@>=3.0.0 <3.15.2": ^3.15.2
     "js-yaml@>=4.0.0 <4.3.2": ^4.3.2
 allowBuilds:
-  "@biomejs/biome": true
-  "@parcel/watcher": true
-  better-sqlite3: true
-  browser-tabs-lock: true
-  bufferutil: true
-  core-js: true
-  esbuild: true
-  hugo-extended: true
-  protobufjs: true
-  sharp: true
-  unrs-resolver: true
+    "@biomejs/biome": true
+    "@parcel/watcher": true
+    better-sqlite3: true
+    browser-tabs-lock: true
+    bufferutil: true
+    core-js: true
+    esbuild: true
+    hugo-extended: true
+    protobufjs: true
+    sharp: true
+    unrs-resolver: true
 catalog:
     "@ariakit/react": ^0.4.15
     "@aws-sdk/client-s3": ^3.744.0
