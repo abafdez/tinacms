@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { withBase } from '#lib/utils.ts';
-  import Section from '#lib/components/layout/Section.svelte';
-  import Container from '#lib/components/layout/Container.svelte';
-  import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
-  import Card from '#lib/components/ui/Card.svelte';
-  import type { PageProps } from './$types';
+import { withBase } from '#lib/utils.ts';
+import Section from '#lib/components/layout/Section.svelte';
+import Container from '#lib/components/layout/Container.svelte';
+import GradientTitle from '#lib/components/ui/GradientTitle.svelte';
+import Card from '#lib/components/ui/Card.svelte';
+import type { PageProps } from './$types';
 
-  let { data }: PageProps = $props();
+let { data }: PageProps = $props();
 </script>
 
 <svelte:head>

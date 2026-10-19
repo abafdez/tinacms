@@ -1,19 +1,19 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+import type { Snippet } from 'svelte';
 
-  let {
-    children,
-    size = '6xl',
-    as = 'h1',
-    class: className = '',
-    'data-tina-field': dataTinaField,
-  }: {
-    children?: Snippet;
-    size?: '5xl' | '6xl';
-    as?: 'h1' | 'h2';
-    class?: string;
-    'data-tina-field'?: string;
-  } = $props();
+let {
+  children,
+  size = '6xl',
+  as = 'h1',
+  class: className = '',
+  'data-tina-field': dataTinaField,
+}: {
+  children?: Snippet;
+  size?: '5xl' | '6xl';
+  as?: 'h1' | 'h2';
+  class?: string;
+  'data-tina-field'?: string;
+} = $props();
 </script>
 
 {#if as === 'h2'}

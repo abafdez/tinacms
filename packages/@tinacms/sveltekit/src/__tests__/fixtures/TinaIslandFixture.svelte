@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TinaIsland from '../../TinaIsland.svelte';
+import TinaIsland from '../../TinaIsland.svelte';
 </script>
 
 <TinaIsland

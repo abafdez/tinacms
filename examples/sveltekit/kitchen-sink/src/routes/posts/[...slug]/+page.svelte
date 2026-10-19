@@ -1,12 +1,10 @@
 <script lang="ts">
-  import TinaIsland from '@tinacms/sveltekit/TinaIsland.svelte';
-  import PostView from '#lib/components/PostView.svelte';
+import TinaIsland from '@tinacms/sveltekit/TinaIsland.svelte';
+import PostView from '#lib/components/PostView.svelte';
 
-  let { data } = $props();
+let { data } = $props();
 
-  const slug = $derived(
-    data.data.post._sys.breadcrumbs.join('/')
-  );
+const slug = $derived(data.data.post._sys.breadcrumbs.join('/'));
 </script>
 
 <TinaIsland

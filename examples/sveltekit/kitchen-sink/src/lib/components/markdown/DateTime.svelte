@@ -1,25 +1,25 @@
 <script lang="ts">
-  let {
-    format = 'local',
-  }: {
-    format?: string;
-  } = $props();
+let {
+  format = 'local',
+}: {
+  format?: string;
+} = $props();
 
-  const now = new Date();
+const now = new Date();
 
-  function formatDisplay(fmt: string): string {
-    switch (fmt) {
-      case 'iso':
-        return now.toISOString();
-      case 'utc':
-        return now.toUTCString();
-      case 'local':
-      default:
-        return now.toLocaleDateString();
-    }
+function formatDisplay(fmt: string): string {
+  switch (fmt) {
+    case 'iso':
+      return now.toISOString();
+    case 'utc':
+      return now.toUTCString();
+    case 'local':
+    default:
+      return now.toLocaleDateString();
   }
+}
 
-  const formatted = $derived(formatDisplay(format));
+const formatted = $derived(formatDisplay(format));
 </script>
 
 <time datetime={now.toISOString()} class="date-time-badge">{formatted}</time>

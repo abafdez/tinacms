@@ -28,11 +28,19 @@ it('shows the editor data for the current query and server data after navigation
   const heading = () => screen.container.querySelector('h1')?.textContent;
   expect(heading()).toBe('Saved title');
 
-  sendFromEditor({ type: 'updateData', id: 'a', data: { title: 'Unsaved title' } });
+  sendFromEditor({
+    type: 'updateData',
+    id: 'a',
+    data: { title: 'Unsaved title' },
+  });
   await nextMessage();
   expect(heading()).toBe('Unsaved title');
 
-  sendFromEditor({ type: 'updateData', id: 'other', data: { title: 'Wrong form' } });
+  sendFromEditor({
+    type: 'updateData',
+    id: 'other',
+    data: { title: 'Wrong form' },
+  });
   await nextMessage();
   expect(heading()).toBe('Unsaved title');
 

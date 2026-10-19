@@ -1,13 +1,13 @@
 <script lang="ts">
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
 
-  let {
-    children,
-    foo,
-  }: {
-    children?: any;
-    foo?: string;
-  } = $props();
+let {
+  children,
+  foo,
+}: {
+  children?: any;
+  foo?: string;
+} = $props();
 </script>
 
 <aside class="pull-quote">

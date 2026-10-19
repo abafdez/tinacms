@@ -1,8 +1,8 @@
 <script lang="ts">
-  import AuthorDetail from '#lib/components/tina/AuthorDetail.svelte';
-  import type { PageProps } from './$types';
+import AuthorDetail from '#lib/components/tina/AuthorDetail.svelte';
+import type { PageProps } from './$types';
 
-  let { data }: PageProps = $props();
+let { data }: PageProps = $props();
 </script>
 
 <svelte:head>

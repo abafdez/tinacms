@@ -1,25 +1,25 @@
 <script lang="ts">
-  import Hero from './Hero.svelte';
-  import Features from './Features.svelte';
-  import CTA from './CTA.svelte';
-  import Testimonial from './Testimonial.svelte';
-  import Content from './Content.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
+import Hero from './Hero.svelte';
+import Features from './Features.svelte';
+import CTA from './CTA.svelte';
+import Testimonial from './Testimonial.svelte';
+import Content from './Content.svelte';
+import { tinaField } from '@tinacms/sveltekit';
 
-  let { blocks = [] }: { blocks?: Array<any | null> } = $props();
+let { blocks = [] }: { blocks?: Array<any | null> } = $props();
 
-  const typeNameMap: Record<string, string> = {
-    PageBlocksHero: 'hero',
-    PageBlocksFeatures: 'features',
-    PageBlocksCta: 'cta',
-    PageBlocksTestimonial: 'testimonial',
-    PageBlocksContent: 'content',
-  };
+const typeNameMap: Record<string, string> = {
+  PageBlocksHero: 'hero',
+  PageBlocksFeatures: 'features',
+  PageBlocksCta: 'cta',
+  PageBlocksTestimonial: 'testimonial',
+  PageBlocksContent: 'content',
+};
 
-  function getTemplate(block: any): string {
-    const typename = block.__typename ?? '';
-    return block._template || typeNameMap[typename] || typename;
-  }
+function getTemplate(block: any): string {
+  const typename = block.__typename ?? '';
+  return block._template || typeNameMap[typename] || typename;
+}
 </script>
 
 {#if !blocks || blocks.length === 0}

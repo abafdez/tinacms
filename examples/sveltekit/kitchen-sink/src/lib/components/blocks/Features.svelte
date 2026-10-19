@@ -1,25 +1,25 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import Icon from '../layout/Icon.svelte';
-  import Actions from '../layout/Actions.svelte';
-  import Card from '../ui/Card.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import Icon from '../layout/Icon.svelte';
+import Actions from '../layout/Actions.svelte';
+import Card from '../ui/Card.svelte';
+import { tinaField } from '@tinacms/sveltekit';
 
-  let { data }: { data: any } = $props();
+let { data }: { data: any } = $props();
 
-  const normalizedItems = $derived(
-    data.items?.map((item: any) => {
-      if (typeof item === 'string') {
-        return { title: item };
-      }
-      return item;
-    }) ?? []
-  );
+const normalizedItems = $derived(
+  data.items?.map((item: any) => {
+    if (typeof item === 'string') {
+      return { title: item };
+    }
+    return item;
+  }) ?? []
+);
 
-  const isSimpleLayout = $derived(
-    data.items?.every((item: any) => typeof item === 'string')
-  );
+const isSimpleLayout = $derived(
+  data.items?.every((item: any) => typeof item === 'string')
+);
 </script>
 
 <Section color={data.color}>

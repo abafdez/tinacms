@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+import type { Snippet } from 'svelte';
 
-  let {
-    children,
-    color = 'default',
-    class: className = '',
-  }: {
-    children?: Snippet;
-    color?: string | null;
-    class?: string;
-  } = $props();
+let {
+  children,
+  color = 'default',
+  class: className = '',
+}: {
+  children?: Snippet;
+  color?: string | null;
+  class?: string;
+} = $props();
 </script>
 
 <section class="section section-{color ?? 'default'} {className}">

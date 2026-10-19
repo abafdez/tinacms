@@ -1,44 +1,42 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import GradientTitle from '../ui/GradientTitle.svelte';
-  import NoData from '../ui/NoData.svelte';
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
-  import type { QueryResult } from '@tinacms/sveltekit/data';
-  import { useTina } from '@tinacms/sveltekit/use-tina';
-  import { sanitizeImageSrc, formatDate } from '#lib/utils.ts';
-  import { customComponents } from '#lib/components/markdown/index.ts';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import GradientTitle from '../ui/GradientTitle.svelte';
+import NoData from '../ui/NoData.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import { tinaField } from '@tinacms/sveltekit';
+import type { QueryResult } from '@tinacms/sveltekit/data';
+import { useTina } from '@tinacms/sveltekit/use-tina';
+import { sanitizeImageSrc, formatDate } from '#lib/utils.ts';
+import { customComponents } from '#lib/components/markdown/index.ts';
 
-  let {
-    query,
-    formattedPubDate: initialPubDate,
-    formattedUpdatedDate: initialUpdatedDate,
-  }: {
-    query: QueryResult<any>;
-    formattedPubDate?: string;
-    formattedUpdatedDate?: string;
-  } = $props();
+let {
+  query,
+  formattedPubDate: initialPubDate,
+  formattedUpdatedDate: initialUpdatedDate,
+}: {
+  query: QueryResult<any>;
+  formattedPubDate?: string;
+  formattedUpdatedDate?: string;
+} = $props();
 
-  const tina = useTina(() => query);
+const tina = useTina(() => query);
 
-  const blog = $derived(
-    tina.data?.blog
-  );
+const blog = $derived(tina.data?.blog);
 
-  const formattedDate = $derived(
-    blog?.pubDate ? formatDate(blog.pubDate) : (initialPubDate ?? '')
-  );
-  const formattedUpdatedDate = $derived(
-    blog?.updatedDate ? formatDate(blog.updatedDate) : (initialUpdatedDate ?? '')
-  );
+const formattedDate = $derived(
+  blog?.pubDate ? formatDate(blog.pubDate) : (initialPubDate ?? '')
+);
+const formattedUpdatedDate = $derived(
+  blog?.updatedDate ? formatDate(blog.updatedDate) : (initialUpdatedDate ?? '')
+);
 
-  const avatarSrc = $derived(
-    blog?.author?.avatar ? sanitizeImageSrc(blog.author.avatar) : ''
-  );
-  const heroSrc = $derived(
-    blog?.heroImage ? sanitizeImageSrc(blog.heroImage) : ''
-  );
+const avatarSrc = $derived(
+  blog?.author?.avatar ? sanitizeImageSrc(blog.author.avatar) : ''
+);
+const heroSrc = $derived(
+  blog?.heroImage ? sanitizeImageSrc(blog.heroImage) : ''
+);
 </script>
 
 {#if !blog}

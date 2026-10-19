@@ -1,9 +1,9 @@
 <script lang="ts">
-  let {
-    message = 'No data found',
-  }: {
-    message?: string;
-  } = $props();
+let {
+  message = 'No data found',
+}: {
+  message?: string;
+} = $props();
 </script>
 
 <div class="no-data">

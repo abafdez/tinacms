@@ -41,7 +41,9 @@ describe('subscribeToTinaData', () => {
 
     expect(onUpdate).toHaveBeenCalledOnce();
     const updated = onUpdate.mock.calls[0][0];
-    expect(updated).toEqual(expect.objectContaining({ title: 'Unsaved title' }));
+    expect(updated).toEqual(
+      expect.objectContaining({ title: 'Unsaved title' })
+    );
     expect(tinaField(updated, 'title')).toBe('post-id---title');
 
     stop();

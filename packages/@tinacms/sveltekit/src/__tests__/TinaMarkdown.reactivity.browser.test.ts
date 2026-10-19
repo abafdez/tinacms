@@ -19,6 +19,8 @@ it('renders untyped text leaves the editor adds to new paragraphs', async () => 
   await screen.rerender({ content: doc('first', 'second') });
   await screen.rerender({ content: doc('first', 'second line') });
 
-  const paragraphs = [...screen.container.querySelectorAll('p')].map((p) => p.textContent?.trim());
+  const paragraphs = [...screen.container.querySelectorAll('p')].map((p) =>
+    p.textContent?.trim()
+  );
   expect(paragraphs).toEqual(['first', 'second line']);
 });

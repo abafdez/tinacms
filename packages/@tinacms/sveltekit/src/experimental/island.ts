@@ -98,8 +98,7 @@ function rejectIfUnsafe(request: Request): Response | null {
   }
   const contentType = request.headers.get('content-type') ?? '';
   if (
-    contentType.split(';', 1)[0]?.trim().toLowerCase() !==
-    PREVIEW_CONTENT_TYPE
+    contentType.split(';', 1)[0]?.trim().toLowerCase() !== PREVIEW_CONTENT_TYPE
   ) {
     return new Response('Not Found', { status: 404 });
   }

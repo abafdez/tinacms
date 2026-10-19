@@ -66,6 +66,8 @@ describe('tinaVitePlugin', () => {
       type: 'asset',
       fileName: 'admin/bridge.js',
     });
-    expect(Buffer.from(emitFile.mock.calls[0][0].source).length).toBeGreaterThan(0);
+    expect(
+      Buffer.from(emitFile.mock.calls[0][0].source).length
+    ).toBeGreaterThan(0);
   });
 });

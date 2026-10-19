@@ -1,20 +1,20 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+import type { Snippet } from 'svelte';
 
-  type ContainerSize = 'custom' | 'small' | 'medium' | 'large' | 'default';
-  type ContainerWidth = 'small' | 'medium' | 'large' | 'custom';
+type ContainerSize = 'custom' | 'small' | 'medium' | 'large' | 'default';
+type ContainerWidth = 'small' | 'medium' | 'large' | 'custom';
 
-  let {
-    children,
-    size = 'medium',
-    width = 'large',
-    class: className = '',
-  }: {
-    children?: Snippet;
-    size?: ContainerSize;
-    width?: ContainerWidth;
-    class?: string;
-  } = $props();
+let {
+  children,
+  size = 'medium',
+  width = 'large',
+  class: className = '',
+}: {
+  children?: Snippet;
+  size?: ContainerSize;
+  width?: ContainerWidth;
+  class?: string;
+} = $props();
 </script>
 
 <div class="container container-{width} padding-{size} {className}">

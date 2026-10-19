@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { CodeBlockComponentProps } from '../../types';
+import type { CodeBlockComponentProps } from '../../types';
 
-  let { value, lang }: CodeBlockComponentProps = $props();
+let { value, lang }: CodeBlockComponentProps = $props();
 </script>
 
 <figure data-testid="code-block-override" data-language={lang}>

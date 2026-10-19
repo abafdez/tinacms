@@ -1,8 +1,8 @@
 <script lang="ts">
-  import BlogDetail from '#lib/components/tina/BlogDetail.svelte';
-  import type { PageProps } from './$types';
+import BlogDetail from '#lib/components/tina/BlogDetail.svelte';
+import type { PageProps } from './$types';
 
-  let { data }: PageProps = $props();
+let { data }: PageProps = $props();
 </script>
 
 <svelte:head>

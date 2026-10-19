@@ -1,24 +1,24 @@
 <script lang="ts">
-  export interface IconData {
-    name?: string | null;
-    color?: string | null;
-    style?: string | null;
-    size?: string | null;
-  }
+export interface IconData {
+  name?: string | null;
+  color?: string | null;
+  style?: string | null;
+  size?: string | null;
+}
 
-  let {
-    data,
-    class: className = '',
-    parentThemeColor = 'blue',
-  }: {
-    data?: IconData | null;
-    class?: string;
-    parentThemeColor?: string;
-  } = $props();
+let {
+  data,
+  class: className = '',
+  parentThemeColor = 'blue',
+}: {
+  data?: IconData | null;
+  class?: string;
+  parentThemeColor?: string;
+} = $props();
 
-  const name = $derived(data?.name ?? 'Tina');
-  const size = $derived(data?.size ?? 'medium');
-  const isTina = $derived(name === 'Tina');
+const name = $derived(data?.name ?? 'Tina');
+const size = $derived(data?.size ?? 'medium');
+const isTina = $derived(name === 'Tina');
 </script>
 
 <div class="icon-wrapper size-{size} {className}">

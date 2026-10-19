@@ -1,26 +1,26 @@
 <script lang="ts">
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
 
-  let {
-    children,
-    placeholder = 'Enter your email',
-    buttonText = 'Subscribe',
-    disclaimer,
-  }: {
-    children?: any;
-    placeholder?: string;
-    buttonText?: string;
-    disclaimer?: any;
-  } = $props();
+let {
+  children,
+  placeholder = 'Enter your email',
+  buttonText = 'Subscribe',
+  disclaimer,
+}: {
+  children?: any;
+  placeholder?: string;
+  buttonText?: string;
+  disclaimer?: any;
+} = $props();
 
-  let email = $state('');
-  let submitted = $state(false);
+let email = $state('');
+let submitted = $state(false);
 
-  function handleSubmit(e: SubmitEvent) {
-    e.preventDefault();
-    submitted = true;
-    email = '';
-  }
+function handleSubmit(e: SubmitEvent) {
+  e.preventDefault();
+  submitted = true;
+  email = '';
+}
 </script>
 
 <div class="newsletter-wrap">

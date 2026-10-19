@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import { tinaField } from '@tinacms/sveltekit';
 
-  let { data }: { data: any } = $props();
-  const isPrimary = $derived(data.color === 'primary');
+let { data }: { data: any } = $props();
+const isPrimary = $derived(data.color === 'primary');
 </script>
 
 <Section color={data.color}>

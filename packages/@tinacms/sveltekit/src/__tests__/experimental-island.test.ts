@@ -8,7 +8,8 @@ import TinaIslandFixture from './fixtures/TinaIslandFixture.svelte';
 import { requestWithMetadata } from '../data';
 import { experimental_createIslandHandler } from '../experimental/island';
 
-const query = 'query Post($relativePath: String!) { post(relativePath: $relativePath) }';
+const query =
+  'query Post($relativePath: String!) { post(relativePath: $relativePath) }';
 const variables = { relativePath: 'hello.md' };
 const id = hashFromQuery(JSON.stringify({ query, variables }));
 

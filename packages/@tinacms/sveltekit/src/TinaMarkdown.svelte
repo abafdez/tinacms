@@ -1,58 +1,58 @@
 <script lang="ts">
-  import type {
-    CodeBlockElement,
-    CustomComponentsMap,
-    MdxElement,
-    TableAlign,
-    TableElement,
-    TableRowElement,
-    TextElement,
-    TinaComponent,
-    TinaMarkdownProps,
-    TinaRichTextNode,
-  } from './types';
-  import { sanitizeHref, sanitizeImageSrc } from './sanitize';
+import type {
+  CodeBlockElement,
+  CustomComponentsMap,
+  MdxElement,
+  TableAlign,
+  TableElement,
+  TableRowElement,
+  TextElement,
+  TinaComponent,
+  TinaMarkdownProps,
+  TinaRichTextNode,
+} from './types';
+import { sanitizeHref, sanitizeImageSrc } from './sanitize';
 
-  let { content, components = {} }: TinaMarkdownProps = $props();
+let { content, components = {} }: TinaMarkdownProps = $props();
 
-  const nodes = $derived.by(() => {
-    if (!content) return [];
-    if (Array.isArray(content)) return content as TinaRichTextNode[];
-    return (content.children ?? []) as TinaRichTextNode[];
-  });
+const nodes = $derived.by(() => {
+  if (!content) return [];
+  if (Array.isArray(content)) return content as TinaRichTextNode[];
+  return (content.children ?? []) as TinaRichTextNode[];
+});
 
-  // The editor sends newly typed leaves as `{ text }` without `type: 'text'`.
-  function isLeaf(node: TinaRichTextNode): boolean {
-    return typeof (node as { text?: unknown }).text === 'string';
-  }
+// The editor sends newly typed leaves as `{ text }` without `type: 'text'`.
+function isLeaf(node: TinaRichTextNode): boolean {
+  return typeof (node as { text?: unknown }).text === 'string';
+}
 
-  // Overrides have different prop shapes; looked up by a runtime key they are untyped.
-  function override(key: string): TinaComponent | undefined {
-    return (components as Record<string, TinaComponent | undefined>)[key];
-  }
+// Overrides have different prop shapes; looked up by a runtime key they are untyped.
+function override(key: string): TinaComponent | undefined {
+  return (components as Record<string, TinaComponent | undefined>)[key];
+}
 
-  function tableRows(node: TableElement): TableRowElement[] {
-    return node.children ?? [];
-  }
+function tableRows(node: TableElement): TableRowElement[] {
+  return node.children ?? [];
+}
 
-  function codeValue(node: CodeBlockElement): string {
-    return (
-      node.value ??
-      node.children
-        ?.map((line) => line.children?.map((text) => text.text).join('') ?? '')
-        .join('\n') ??
-      ''
-    );
-  }
+function codeValue(node: CodeBlockElement): string {
+  return (
+    node.value ??
+    node.children
+      ?.map((line) => line.children?.map((text) => text.text).join('') ?? '')
+      .join('\n') ??
+    ''
+  );
+}
 
-  function cellInline(value: unknown): TinaRichTextNode[] {
-    const nodes = Array.isArray(value)
-      ? (value as TinaRichTextNode[])
-      : ((value as { children?: TinaRichTextNode[] } | null)?.children ?? []);
-    return nodes.flatMap((node) =>
-      node.type === 'p' ? (node.children as TinaRichTextNode[]) : []
-    );
-  }
+function cellInline(value: unknown): TinaRichTextNode[] {
+  const nodes = Array.isArray(value)
+    ? (value as TinaRichTextNode[])
+    : ((value as { children?: TinaRichTextNode[] } | null)?.children ?? []);
+  return nodes.flatMap((node) =>
+    node.type === 'p' ? (node.children as TinaRichTextNode[]) : []
+  );
+}
 </script>
 
 {#snippet renderNodes(items: TinaRichTextNode[])}

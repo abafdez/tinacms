@@ -1,40 +1,36 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import GradientTitle from '../ui/GradientTitle.svelte';
-  import NoData from '../ui/NoData.svelte';
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
-  import type { QueryResult } from '@tinacms/sveltekit/data';
-  import { useTina } from '@tinacms/sveltekit/use-tina';
-  import { sanitizeImageSrc, formatDate, withBase } from '#lib/utils.ts';
-  import { customComponents } from '#lib/components/markdown/index.ts';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import GradientTitle from '../ui/GradientTitle.svelte';
+import NoData from '../ui/NoData.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import { tinaField } from '@tinacms/sveltekit';
+import type { QueryResult } from '@tinacms/sveltekit/data';
+import { useTina } from '@tinacms/sveltekit/use-tina';
+import { sanitizeImageSrc, formatDate, withBase } from '#lib/utils.ts';
+import { customComponents } from '#lib/components/markdown/index.ts';
 
-  let {
-    query,
-    formattedDate: initialFormattedDate,
-  }: {
-    query: QueryResult<any>;
-    formattedDate?: string;
-  } = $props();
+let {
+  query,
+  formattedDate: initialFormattedDate,
+}: {
+  query: QueryResult<any>;
+  formattedDate?: string;
+} = $props();
 
-  const tina = useTina(() => query);
+const tina = useTina(() => query);
 
-  const post = $derived(
-    tina.data?.post
-  );
+const post = $derived(tina.data?.post);
 
-  const formattedDate = $derived(
-    post?.date ? formatDate(post.date) : (initialFormattedDate ?? '')
-  );
+const formattedDate = $derived(
+  post?.date ? formatDate(post.date) : (initialFormattedDate ?? '')
+);
 
-  const authorFilename = $derived(post?.author?._sys?.filename);
-  const avatarSrc = $derived(
-    post?.author?.avatar ? sanitizeImageSrc(post.author.avatar) : ''
-  );
-  const heroSrc = $derived(
-    post?.heroImg ? sanitizeImageSrc(post.heroImg) : ''
-  );
+const authorFilename = $derived(post?.author?._sys?.filename);
+const avatarSrc = $derived(
+  post?.author?.avatar ? sanitizeImageSrc(post.author.avatar) : ''
+);
+const heroSrc = $derived(post?.heroImg ? sanitizeImageSrc(post.heroImg) : '');
 </script>
 
 {#if !post}

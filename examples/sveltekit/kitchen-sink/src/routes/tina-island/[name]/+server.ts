@@ -7,26 +7,29 @@ import client from '#tina/__generated__/client.ts';
 export const prerender = false;
 
 export const POST = experimental_createIslandHandler({
-	post: {
-		component: PostView,
-		wrapper: { tag: 'article', className: 'post-content' },
-		fetch: (event, params) => {
-			const slug = params.get('slug');
-			if (
-				!slug ||
-				!slug
-					.split('/')
-					.every((part) => /^[A-Za-z0-9_.-]+$/.test(part) && part !== '.' && part !== '..')
-			) {
-				throw error(404, 'Post not found');
-			}
+  post: {
+    component: PostView,
+    wrapper: { tag: 'article', className: 'post-content' },
+    fetch: (event, params) => {
+      const slug = params.get('slug');
+      if (
+        !slug ||
+        !slug
+          .split('/')
+          .every(
+            (part) =>
+              /^[A-Za-z0-9_.-]+$/.test(part) && part !== '.' && part !== '..'
+          )
+      ) {
+        throw error(404, 'Post not found');
+      }
 
-			return requestWithMetadata(
-				client.queries.post({ relativePath: `${slug}.md` }),
-				event,
-				{ priority: 'primary' }
-			);
-		},
-		propsFromData: (data) => ({ query: data })
-	}
+      return requestWithMetadata(
+        client.queries.post({ relativePath: `${slug}.md` }),
+        event,
+        { priority: 'primary' }
+      );
+    },
+    propsFromData: (data) => ({ query: data }),
+  },
 });

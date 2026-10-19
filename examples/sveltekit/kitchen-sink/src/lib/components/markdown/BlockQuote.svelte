@@ -1,13 +1,13 @@
 <script lang="ts">
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
 
-  let {
-    children,
-    authorName,
-  }: {
-    children?: any;
-    authorName?: string;
-  } = $props();
+let {
+  children,
+  authorName,
+}: {
+  children?: any;
+  authorName?: string;
+} = $props();
 </script>
 
 <div class="custom-blockquote-wrap">

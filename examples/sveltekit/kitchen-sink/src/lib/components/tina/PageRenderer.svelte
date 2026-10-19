@@ -1,15 +1,13 @@
 <script lang="ts">
-  import Blocks from '../blocks/Blocks.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
-  import type { QueryResult } from '@tinacms/sveltekit/data';
-  import { useTina } from '@tinacms/sveltekit/use-tina';
+import Blocks from '../blocks/Blocks.svelte';
+import { tinaField } from '@tinacms/sveltekit';
+import type { QueryResult } from '@tinacms/sveltekit/data';
+import { useTina } from '@tinacms/sveltekit/use-tina';
 
-  let { query }: { query: QueryResult<any> } = $props();
-  const tina = useTina(() => query);
+let { query }: { query: QueryResult<any> } = $props();
+const tina = useTina(() => query);
 
-  const page = $derived(
-    tina.data?.page
-  );
+const page = $derived(tina.data?.page);
 </script>
 
 {#if !page}

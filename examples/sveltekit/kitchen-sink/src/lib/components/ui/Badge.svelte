@@ -1,15 +1,15 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+import type { Snippet } from 'svelte';
 
-  let {
-    children,
-    size = 'md',
-    class: className = '',
-  }: {
-    children?: Snippet;
-    size?: 'sm' | 'md';
-    class?: string;
-  } = $props();
+let {
+  children,
+  size = 'md',
+  class: className = '',
+}: {
+  children?: Snippet;
+  size?: 'sm' | 'md';
+  class?: string;
+} = $props();
 </script>
 
 <span class="badge badge-{size} {className}">

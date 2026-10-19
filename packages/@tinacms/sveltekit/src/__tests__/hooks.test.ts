@@ -33,7 +33,10 @@ describe('tinaHandle', () => {
       variables: {},
     };
     let transformed = '';
-    const resolve: Parameters<Handle>[0]['resolve'] = async (_event, options) => {
+    const resolve: Parameters<Handle>[0]['resolve'] = async (
+      _event,
+      options
+    ) => {
       await requestWithMetadata(
         { data: { title: 'Post' }, ...secondary },
         event
@@ -132,7 +135,10 @@ describe('tinaHandle', () => {
     const event = makeEvent(editRequest());
     const encoder = new TextEncoder();
     let firstChunkSent = false;
-    const resolve: Parameters<Handle>[0]['resolve'] = async (_event, options) => {
+    const resolve: Parameters<Handle>[0]['resolve'] = async (
+      _event,
+      options
+    ) => {
       await requestWithMetadata(
         {
           data: { title: 'Streamed title' },

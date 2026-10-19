@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
-  import { tinaField } from '@tinacms/sveltekit';
+import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
+import { tinaField } from '@tinacms/sveltekit';
 
-  export interface NavAction {
-    label?: string | null;
-    type?: string | null;
-    link?: string | null;
-    icon?: boolean | null;
-  }
+export interface NavAction {
+  label?: string | null;
+  type?: string | null;
+  link?: string | null;
+  icon?: boolean | null;
+}
 
-  let {
-    parentColor = 'default',
-    class: className = '',
-    actions = [],
-  }: {
-    parentColor?: string | null;
-    class?: string;
-    actions?: Array<NavAction | null>;
-  } = $props();
+let {
+  parentColor = 'default',
+  class: className = '',
+  actions = [],
+}: {
+  parentColor?: string | null;
+  class?: string;
+  actions?: Array<NavAction | null>;
+} = $props();
 </script>
 
 <div class="actions-group {className}">

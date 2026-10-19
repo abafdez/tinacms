@@ -1,16 +1,18 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import Actions from '../layout/Actions.svelte';
-  import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
-  import { customComponents } from '../markdown/index.ts';
-  import { tinaField } from '@tinacms/sveltekit';
-  import { sanitizeImageSrc } from '#lib/utils.ts';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import Actions from '../layout/Actions.svelte';
+import TinaMarkdown from '@tinacms/sveltekit/TinaMarkdown.svelte';
+import { customComponents } from '../markdown/index.ts';
+import { tinaField } from '@tinacms/sveltekit';
+import { sanitizeImageSrc } from '#lib/utils.ts';
 
-  let { data }: { data: any } = $props();
+let { data }: { data: any } = $props();
 
-  const imgSrc = $derived(data.image?.src ? sanitizeImageSrc(data.image.src) : '');
-  const isPrimary = $derived(data.color === 'primary');
+const imgSrc = $derived(
+  data.image?.src ? sanitizeImageSrc(data.image.src) : ''
+);
+const isPrimary = $derived(data.color === 'primary');
 </script>
 
 <Section color={data.color}>

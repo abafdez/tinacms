@@ -1,27 +1,27 @@
 <script lang="ts">
-  import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
-  import Container from './Container.svelte';
-  import Icon from './Icon.svelte';
+import { isFileLink, sanitizeHref, withBase } from '#lib/utils.ts';
+import Container from './Container.svelte';
+import Icon from './Icon.svelte';
 
-  export interface NavItem {
-    href?: string | null;
-    label?: string | null;
-  }
+export interface NavItem {
+  href?: string | null;
+  label?: string | null;
+}
 
-  let {
-    name = 'Tina Kitchen Sink',
-    color = 'default',
-    nav = [],
-    themeColor = 'blue',
-  }: {
-    name?: string;
-    color?: string;
-    nav?: Array<NavItem | null>;
-    themeColor?: string;
-  } = $props();
+let {
+  name = 'Tina Kitchen Sink',
+  color = 'default',
+  nav = [],
+  themeColor = 'blue',
+}: {
+  name?: string;
+  color?: string;
+  nav?: Array<NavItem | null>;
+  themeColor?: string;
+} = $props();
 
-  let mobileNavOpen = $state(false);
-  const isPrimary = $derived(color === 'primary');
+let mobileNavOpen = $state(false);
+const isPrimary = $derived(color === 'primary');
 </script>
 
 <header class="site-header {isPrimary ? 'header-primary' : 'header-default'}">

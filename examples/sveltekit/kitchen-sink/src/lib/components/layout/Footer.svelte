@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { withBase } from '#lib/utils.ts';
-  import Container from './Container.svelte';
-  import Icon from './Icon.svelte';
+import { withBase } from '#lib/utils.ts';
+import Container from './Container.svelte';
+import Icon from './Icon.svelte';
 
-  export interface SocialLink {
-    icon?: string | null;
-    url?: string | null;
-  }
+export interface SocialLink {
+  icon?: string | null;
+  url?: string | null;
+}
 
-  let {
-    social = [],
-  }: {
-    social?: Array<SocialLink | null>;
-  } = $props();
+let {
+  social = [],
+}: {
+  social?: Array<SocialLink | null>;
+} = $props();
 </script>
 
 <footer class="site-footer">

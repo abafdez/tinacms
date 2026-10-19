@@ -1,25 +1,23 @@
 <script lang="ts">
-  import Section from '../layout/Section.svelte';
-  import Container from '../layout/Container.svelte';
-  import GradientTitle from '../ui/GradientTitle.svelte';
-  import Badge from '../ui/Badge.svelte';
-  import NoData from '../ui/NoData.svelte';
-  import { tinaField } from '@tinacms/sveltekit';
-  import type { QueryResult } from '@tinacms/sveltekit/data';
-  import { useTina } from '@tinacms/sveltekit/use-tina';
-  import { sanitizeImageSrc } from '#lib/utils.ts';
+import Section from '../layout/Section.svelte';
+import Container from '../layout/Container.svelte';
+import GradientTitle from '../ui/GradientTitle.svelte';
+import Badge from '../ui/Badge.svelte';
+import NoData from '../ui/NoData.svelte';
+import { tinaField } from '@tinacms/sveltekit';
+import type { QueryResult } from '@tinacms/sveltekit/data';
+import { useTina } from '@tinacms/sveltekit/use-tina';
+import { sanitizeImageSrc } from '#lib/utils.ts';
 
-  let { query }: { query: QueryResult<any> } = $props();
+let { query }: { query: QueryResult<any> } = $props();
 
-  const tina = useTina(() => query);
+const tina = useTina(() => query);
 
-  const author = $derived(
-    tina.data?.author
-  );
+const author = $derived(tina.data?.author);
 
-  const avatarSrc = $derived(
-    author?.avatar ? sanitizeImageSrc(author.avatar) : ''
-  );
+const avatarSrc = $derived(
+  author?.avatar ? sanitizeImageSrc(author.avatar) : ''
+);
 </script>
 
 {#if !author}
