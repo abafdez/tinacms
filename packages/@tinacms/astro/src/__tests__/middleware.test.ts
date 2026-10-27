@@ -99,4 +99,39 @@ describe('onRequest', () => {
     expect(globalIdx).toBeGreaterThan(-1);
     expect(pageIdx).toBeLessThan(globalIdx);
   });
+
+  it('keeps edit-mode responses out of shared caches', async () => {
+    const request = new Request('https://example.com/', {
+      headers: { 'sec-fetch-dest': 'iframe', cookie: '__tina_edit=1' },
+    });
+    const next: MiddlewareNext = () =>
+      Promise.resolve(
+        new Response('<html><head></head><body>ok</body></html>', {
+          headers: {
+            'content-type': 'text/html',
+            'cache-control': 'public, s-maxage=60',
+          },
+        })
+      );
+
+    const response = await onRequest(
+      makeContext({ isPrerendered: false, request }),
+      next
+    );
+
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
+  });
+
+  it('leaves the cache headers of regular responses alone', async () => {
+    const next: MiddlewareNext = () =>
+      Promise.resolve(
+        new Response('ok', {
+          headers: { 'cache-control': 'public, s-maxage=60' },
+        })
+      );
+
+    const response = await onRequest(makeContext({}), next);
+
+    expect(response.headers.get('cache-control')).toBe('public, s-maxage=60');
+  });
 });

@@ -187,7 +187,7 @@ The example ships with `@astrojs/node`, but `@tinacms/bridge` itself has zero No
 | Bun | `astro-bun` (community), or run `@astrojs/node`'s output via `bun run` (Bun's Node compat covers it) |
 | Vercel / Netlify / Cloudflare | The matching `@astrojs/*` adapter |
 
-Normal visitors hitting a server-rendered page get the same HTML they'd get from prerender, so add a CDN cache header (`Cache-Control: s-maxage=60`) on edit-able routes if you want edge caching for read traffic.
+Normal visitors hitting a server-rendered page get the same HTML they'd get from prerender, so add a CDN cache header (`Cache-Control: s-maxage=60`) on edit-able routes if you want edge caching for read traffic. Edit-mode responses always go out as `Cache-Control: private, no-store`, but a CDN that keys on the URL alone can still answer the editor's iframe with the cached public page, which has no bridge. Bypass the cache for requests carrying the `__tina_edit` cookie, or skip edge caching on edit-able routes.
 
 ## What this example doesn't ship (yet)
 

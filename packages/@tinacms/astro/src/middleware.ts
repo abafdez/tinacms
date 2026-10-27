@@ -63,6 +63,8 @@ function editModeInit(response: Response): ResponseInit {
   const headers = new Headers(response.headers);
   // Body length changed; let the runtime re-compute it.
   headers.delete('content-length');
+  // A shared cache keys on the URL, not on the headers that select edit mode.
+  headers.set('Cache-Control', 'private, no-store');
   headers.append('Set-Cookie', EDIT_COOKIE_HEADER);
   return { status: response.status, statusText: response.statusText, headers };
 }
