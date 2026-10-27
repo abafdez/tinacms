@@ -1,8 +1,9 @@
 ---
 /**
- * `code_block` nodes carry their value as either a flat `value` string or as
- * `children: [{ children: [{ text }, ...] }, ...]` (one outer entry per line).
- * Flatten both shapes to a single string before rendering.
+ * `code_block` nodes carry their code as `children: [{ children: [{ text }] }]`
+ * (one outer entry per line), and parsed content also has a flat `value`.
+ * The editor only updates the lines, so they win over `value`, as in the
+ * React renderer and the MDX serializer.
  */
 import type { CodeBlockElement, CustomComponentsMap } from './types';
 
@@ -14,12 +15,11 @@ interface Props {
 const { node, components } = Astro.props;
 const Override = components.code_block;
 
-const value =
-  node.value ??
-  node.children
-    ?.map((line) => line.children?.map((tn) => tn.text).join('') ?? '')
-    .join('\n') ??
-  '';
+const value = node.children?.length
+  ? node.children
+      .map((line) => line.children?.map((tn) => tn.text).join('') ?? '')
+      .join('\n')
+  : (node.value ?? '');
 ---
 {Override ? (
   <Override value={value} lang={node.lang} />

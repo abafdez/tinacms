@@ -88,6 +88,25 @@ describe('TinaMarkdown', () => {
     expect(html).not.toContain('url(x)');
   });
 
+  it('renders a code block from its lines when its value is stale', () => {
+    const { body } = render(TinaMarkdown, {
+      props: {
+        content: [
+          {
+            type: 'code_block',
+            value: 'const before = 1',
+            children: [
+              { children: [{ type: 'text', text: 'const after = 2' }] },
+            ],
+          },
+        ] satisfies TinaRichTextContent,
+      },
+    });
+
+    expect(body).toContain('const after = 2');
+    expect(body).not.toContain('const before = 1');
+  });
+
   it('renders code blocks and named MDX nodes through app overrides', () => {
     const { body } = render(TinaMarkdown, {
       props: {

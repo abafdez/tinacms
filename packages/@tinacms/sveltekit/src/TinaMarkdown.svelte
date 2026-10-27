@@ -35,14 +35,12 @@ function tableRows(node: TableElement): TableRowElement[] {
   return node.children ?? [];
 }
 
+// The editor only updates the lines, so they win over the parsed `value`.
 function codeValue(node: CodeBlockElement): string {
-  return (
-    node.value ??
-    node.children
-      ?.map((line) => line.children?.map((text) => text.text).join('') ?? '')
-      .join('\n') ??
-    ''
-  );
+  if (!node.children?.length) return node.value ?? '';
+  return node.children
+    .map((line) => line.children?.map((text) => text.text).join('') ?? '')
+    .join('\n');
 }
 
 function cellInline(value: unknown): TinaRichTextNode[] {

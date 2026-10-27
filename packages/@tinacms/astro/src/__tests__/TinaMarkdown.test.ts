@@ -32,6 +32,24 @@ describe('TinaMarkdown', () => {
     expect(html).toMatchSnapshot();
   });
 
+  it('renders a code block from its lines when its value is stale', async () => {
+    const html = await render({
+      props: {
+        content: [
+          {
+            type: 'code_block',
+            value: 'const before = 1',
+            children: [
+              { children: [{ type: 'text', text: 'const after = 2' }] },
+            ],
+          },
+        ],
+      },
+    });
+    expect(html).toContain('const after = 2');
+    expect(html).not.toContain('const before = 1');
+  });
+
   it('renders nested leaf-mark formatting', async () => {
     const html = await render({ props: { content: leafMarks } });
     expect(html).toMatchSnapshot();
