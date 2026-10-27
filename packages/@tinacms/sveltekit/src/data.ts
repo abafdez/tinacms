@@ -88,13 +88,16 @@ export async function requestWithMetadata<TData>(
     id,
   };
 
-  recordForm(event.locals as TinaLocals, {
-    id,
-    query,
-    variables,
-    data: enriched.data as unknown as object,
-    priority: options?.priority,
-  });
+  // A failed query has nothing the editor could open.
+  if (query) {
+    recordForm(event.locals as TinaLocals, {
+      id,
+      query,
+      variables,
+      data: enriched.data as unknown as object,
+      priority: options?.priority,
+    });
+  }
 
   return enriched;
 }

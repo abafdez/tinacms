@@ -222,4 +222,56 @@ describe('tinaHandle', () => {
     expect(response.headers.get('content-length')).toBe('11');
     expect(response.headers.get('set-cookie')).toContain(`${EDIT_COOKIE}=1`);
   });
+
+  it('records no form for a failed query', async () => {
+    const event = makeEvent(editRequest());
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    let transformed = '';
+    const resolve: Parameters<Handle>[0]['resolve'] = async (
+      _event,
+      options
+    ) => {
+      await requestWithMetadata(Promise.reject(new Error('down')), event);
+      transformed =
+        options?.transformPageChunk?.({
+          html: '<html><head></head><body></body></html>',
+          done: true,
+        }) ?? '';
+      return new Response(transformed, {
+        headers: { 'content-type': 'text/html' },
+      });
+    };
+
+    await tinaHandle({ event, resolve });
+
+    expect(transformed).not.toContain('data-tina-form');
+    warn.mockRestore();
+  });
+
+  it('keeps edit-mode responses out of shared caches', async () => {
+    const event = makeEvent(editRequest());
+    const resolve: Parameters<Handle>[0]['resolve'] = async () =>
+      new Response('<html><head></head><body></body></html>', {
+        headers: {
+          'content-type': 'text/html',
+          'cache-control': 'public, s-maxage=60',
+        },
+      });
+
+    const response = await tinaHandle({ event, resolve });
+
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
+  });
+
+  it('leaves the cache headers of regular responses alone', async () => {
+    const event = makeEvent(new Request('https://site.test/posts/hello'));
+    const resolve: Parameters<Handle>[0]['resolve'] = async () =>
+      new Response('ok', {
+        headers: { 'cache-control': 'public, s-maxage=60' },
+      });
+
+    const response = await tinaHandle({ event, resolve });
+
+    expect(response.headers.get('cache-control')).toBe('public, s-maxage=60');
+  });
 });

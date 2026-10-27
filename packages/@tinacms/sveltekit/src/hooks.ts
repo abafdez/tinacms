@@ -50,6 +50,8 @@ export const tinaHandle: Handle = async ({ event, resolve }) => {
   if (!editing) return response;
 
   const headers = new Headers(response.headers);
+  // A shared cache keys on the URL, not on the headers that select edit mode.
+  headers.set('Cache-Control', 'private, no-store');
   headers.append('Set-Cookie', EDIT_COOKIE_HEADER);
   const contentType = headers.get('content-type') ?? '';
   if (
