@@ -32,6 +32,9 @@ interface Props {
 const { node, components } = Astro.props;
 const t = node.type;
 const Override = components[t];
+// Text nodes may arrive without `type: 'text'`; React and SvelteKit accept them too.
+const isLeaf =
+  t === 'text' || typeof (node as { text?: unknown }).text === 'string';
 
 const containerTypes = new Set([
   'p',
@@ -58,7 +61,7 @@ const containerTypes = new Set([
   <CodeBlockNode node={node as CodeBlockElement} components={components} />
 ) : t === 'table' ? (
   <TableNode node={node as TableElement} components={components} />
-) : t === 'text' ? (
+) : isLeaf ? (
   <Leaf node={node as TextElement} />
 ) : t === 'mdxJsxFlowElement' || t === 'mdxJsxTextElement' ? (
   <MdxNode node={node as MdxElement} components={components} />

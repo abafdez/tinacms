@@ -32,6 +32,17 @@ describe('TinaMarkdown', () => {
     expect(html).toMatchSnapshot();
   });
 
+  it('renders leaves the editor sends without a type', async () => {
+    const html = await render({
+      props: {
+        content: [
+          { type: 'p', children: [{ text: 'Just typed', bold: true }] },
+        ],
+      },
+    });
+    expect(html).toContain('<p><strong>Just typed</strong></p>');
+  });
+
   it('renders a code block from its lines when its value is stale', async () => {
     const html = await render({
       props: {
