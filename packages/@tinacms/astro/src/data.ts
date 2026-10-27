@@ -34,8 +34,8 @@ export async function requestWithMetadata<TData>(
   try {
     result = (await source) ?? null;
   } catch (error) {
-    // In edit mode a doc the editor is creating won't exist yet; the
-    // bridge will populate via overlay. Don't crash the render.
+    // The client throws for a missing document and for a failed request
+    // alike; both resolve to empty data so the page can answer with a 404.
     console.warn('[@tinacms/astro] client query failed', error);
   }
 
@@ -60,14 +60,17 @@ export async function requestWithMetadata<TData>(
     id,
   };
 
-  // No-op outside a request scope (static builds).
-  recordForm({
-    id,
-    query,
-    variables,
-    data: enriched.data as unknown as object,
-    priority: options?.priority,
-  });
+  // A failed query has nothing the editor could open. Recording is a no-op
+  // outside a request scope (static builds).
+  if (query) {
+    recordForm({
+      id,
+      query,
+      variables,
+      data: enriched.data as unknown as object,
+      priority: options?.priority,
+    });
+  }
 
   return enriched;
 }

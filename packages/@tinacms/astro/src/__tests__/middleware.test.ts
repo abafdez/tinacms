@@ -100,6 +100,29 @@ describe('onRequest', () => {
     expect(pageIdx).toBeLessThan(globalIdx);
   });
 
+  it('resolves a failed query to empty data and records no form for it', async () => {
+    const request = new Request('https://example.com/', {
+      headers: { 'sec-fetch-dest': 'iframe', cookie: '__tina_edit=1' },
+    });
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    let result: { data: unknown } | undefined;
+    const next: MiddlewareNext = async () => {
+      result = await requestWithMetadata(Promise.reject(new Error('down')));
+      return new Response('<html><head></head><body>ok</body></html>', {
+        headers: { 'content-type': 'text/html' },
+      });
+    };
+
+    const response = await onRequest(
+      makeContext({ isPrerendered: false, request }),
+      next
+    );
+
+    expect(Object.keys(result?.data ?? {})).toEqual(['_content_source']);
+    expect(await response.text()).not.toContain('data-tina-form');
+    warn.mockRestore();
+  });
+
   it('keeps edit-mode responses out of shared caches', async () => {
     const request = new Request('https://example.com/', {
       headers: { 'sec-fetch-dest': 'iframe', cookie: '__tina_edit=1' },

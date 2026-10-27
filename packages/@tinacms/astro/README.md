@@ -16,6 +16,8 @@ pnpm add -D @tinacms/cli
 
 Requires Astro 5, 6, or 7 and an SSR adapter (`@astrojs/node`, `vercel`, `netlify`, or `cloudflare`) — the island-refresh endpoint (`/tina-island/[name]`) is on-demand. `output: 'server'` is the simplest choice; `output: 'static'` also works as long as editable regions are wrapped in [`<TinaIsland>`](#static-site-editing) and the adapter can serve that one on-demand route.
 
+The middleware keeps per-request state in `AsyncLocalStorage` (`node:async_hooks`). On Cloudflare, enable the `nodejs_compat` compatibility flag in your Wrangler config.
+
 ## Usage
 
 Add the integration to `astro.config.mjs` once. It wires the request-scoped middleware and stages the bundled bridge as a static asset at `/admin/bridge.js` — everything else is auto-injected only on edit-mode requests:
@@ -52,9 +54,9 @@ const post = await requestWithMetadata(
 </article>
 ```
 
-That's the whole user surface. No wiring component in your layout, no `forms` prop to maintain, no `Astro.request` to thread. The integration's middleware buffers each HTML response, and on edit-mode requests splices the form payloads and a `<script type="module" src="/admin/bridge.js">` before `</head>`. Production visitors get **byte-identical HTML to a Tina-free Astro app** — no `data-tina-form` divs, no script tag, no bundle preload. (Exception: pages that use [`<TinaIsland>`](#static-site-editing) carry a one-line inline bootstrap so editing also works when the page is statically built.)
+That's the whole user surface. No wiring component in your layout, no `forms` prop to maintain, no `Astro.request` to thread. The integration's middleware buffers each HTML response, and on edit-mode requests splices the form payloads and a small module script that imports `/admin/bridge.js` before `</head>`. Production visitors get **byte-identical HTML to a Tina-free Astro app** — no `data-tina-form` divs, no script tag, no bundle preload. (Exception: pages that use [`<TinaIsland>`](#static-site-editing) carry a one-line inline bootstrap so editing also works when the page is statically built.)
 
-For cross-origin admin deployments (Codespaces, separate-domain self-hosted), set `PUBLIC_TINA_ADMIN_ORIGIN` in your env (comma-separate to allow multiple). The middleware embeds it inline so the bridge validates inbound `postMessage` events.
+For cross-origin admin deployments (Codespaces, separate-domain self-hosted), set `PUBLIC_TINA_ADMIN_ORIGIN` in your env (comma-separate to allow multiple). The middleware embeds it inline so the bridge validates inbound `postMessage` events. Like every `PUBLIC_` variable, Vite inlines it when the site is built, so it must be set for `astro build`; setting it only on the running server has no effect.
 
 ## Static-site editing
 
@@ -121,7 +123,9 @@ const components: CustomComponentsMap = {
 };
 ```
 
-Supported override keys: `p`, `h1`–`h6`, `ul`, `ol`, `li`, `blockquote`, `lic`, `a`, `img`, `code_block`, `hr`, `break`.
+Supported override keys: `p`, `h1`–`h6`, `ul`, `ol`, `li`, `blockquote`, `lic`, `a`, `img`, `code_block`, `hr`, `break`, `html`, `html_inline`, `table`, `tr`, `th`, `td`.
+
+The `a` and `img` overrides receive the URL exactly as stored. Run it through `sanitizeHref` / `sanitizeImageSrc` before rendering it.
 
 ## Visual editing markers
 
@@ -154,7 +158,8 @@ Coarse-grained boundaries (the whole `_body`) are usually what you want — clic
 | `break` | `<br>` | `break` |
 | `text` (with `bold`/`italic`/`underline`/`strikethrough`/`code`/`highlight`/`textColor`) | nested `<strong>`/`<em>`/`<u>`/`<s>`/`<code>`/`<mark>`/`<span style="color:…">` | n/a |
 | `mdxJsxFlowElement`, `mdxJsxTextElement` | dispatched by `node.name` | n/a — register by name |
-| `html`, `html_inline` | raw HTML via `set:html` | n/a |
+| `table` (with `tr` / `td` rows) | `<table>` with a `<thead>` from the first row | `table`, `tr`, `th`, `td` |
+| `html`, `html_inline` | the markup as escaped text | `html`, `html_inline` — render `set:html` there to opt into raw HTML |
 | `invalid_markdown` | `<pre>{value}</pre>` | n/a |
 
 CMS-supplied URLs in `a` and `img` nodes pass through `sanitizeHref` / `sanitizeImageSrc`, blocking `javascript:`, `data:`, `vbscript:`, and protocol-relative URLs. Both helpers are exposed on `@tinacms/astro/sanitize` for use in your own components (e.g. block-level Hero images, navigation anchors).

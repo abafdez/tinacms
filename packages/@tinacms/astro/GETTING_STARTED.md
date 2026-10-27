@@ -169,7 +169,7 @@ If your admin is on a different origin (Codespaces, separate-domain self-hosted)
 PUBLIC_TINA_ADMIN_ORIGIN=https://admin.example.com
 ```
 
-The middleware embeds it inline so the bridge validates inbound postMessages. Comma-separate to allow multiple (preview + prod).
+The middleware embeds it inline so the bridge validates inbound postMessages. Comma-separate to allow multiple (preview + prod). The value is inlined when the site is built, so set it where `astro build` runs, not only on the running server.
 
 ## 9. Add the dev/build scripts
 
