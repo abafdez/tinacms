@@ -40,6 +40,7 @@ export function initIslandRefresh(
   let pendingRefresh: ReturnType<typeof setTimeout> | null = null;
   let pendingIsFirstUpdate = false;
   const changed = new Set<string>();
+  const lastUpdates = new Map<string, { serialized: string; data: object }>();
 
   const refreshChanged = () => {
     pendingRefresh = null;
@@ -49,7 +50,12 @@ export function initIslandRefresh(
     for (const island of islands) {
       if (island.hasAttribute(MANAGED_ISLAND_ATTR)) continue;
       if (!usesAnyForm(island, ids)) continue;
-      void refreshIsland(island, store);
+      void refreshIsland(island, store).then((ok) => {
+        if (ok) return;
+        for (const id of ids) {
+          if (usesForm(island, id)) lastUpdates.delete(id);
+        }
+      });
     }
   };
 
@@ -66,8 +72,6 @@ export function initIslandRefresh(
     );
   });
 
-  const lastUpdates = new Map<string, string>();
-
   window.addEventListener('message', (event) => {
     if (!isFromAdmin(event)) return;
     const message = event.data;
@@ -80,11 +84,17 @@ export function initIslandRefresh(
       }
       const data = message.data ?? {};
       const serialized = JSON.stringify(data);
-      if (lastUpdates.get(message.id) === serialized) {
+      const last = lastUpdates.get(message.id);
+      // A seed since the last update replaced the store's object, so the
+      // admin's re-send must apply again.
+      if (
+        last?.serialized === serialized &&
+        store.get(message.id) === last.data
+      ) {
         debug('updateData unchanged for', message.id);
         return;
       }
-      lastUpdates.set(message.id, serialized);
+      lastUpdates.set(message.id, { serialized, data });
       debug('updateData received for', message.id);
       store.set(message.id, data);
     }
@@ -92,17 +102,24 @@ export function initIslandRefresh(
 }
 
 function usesAnyForm(island: HTMLElement, ids: ReadonlySet<string>): boolean {
-  const forms = island.getAttribute(FORMS_ATTR);
-  if (forms === null) return true;
-  return forms.split(/\s+/).some((id) => ids.has(id));
+  for (const id of ids) if (usesForm(island, id)) return true;
+  return false;
 }
 
+function usesForm(island: HTMLElement, id: string): boolean {
+  const forms = island.getAttribute(FORMS_ATTR);
+  if (forms === null) return true;
+  return forms.split(/\s+/).includes(id);
+}
+
+/** Resolves false when the island's HTML couldn't be fetched, so the caller
+ *  can let the next identical update retry it. */
 async function refreshIsland(
   island: HTMLElement,
   store: DataStore
-): Promise<void> {
+): Promise<boolean> {
   const endpoint = island.getAttribute(ENDPOINT_ATTR);
-  if (!endpoint) return;
+  if (!endpoint) return true;
 
   const overlay: PreviewEnvelope = {};
   for (const id of store.ids()) {
@@ -112,6 +129,25 @@ async function refreshIsland(
   const refresh = (latestRefresh.get(island) ?? 0) + 1;
   latestRefresh.set(island, refresh);
 
+  const html = await fetchIslandHtml(endpoint, overlay);
+  if (html === null) return false;
+  if (latestRefresh.get(island) !== refresh) {
+    debug('island refetch superseded', endpoint);
+    return true;
+  }
+  try {
+    swapIslandHtml(island, html);
+    reportQuickEdit();
+  } catch (error) {
+    debug('island swap error', endpoint, error);
+  }
+  return true;
+}
+
+async function fetchIslandHtml(
+  endpoint: string,
+  overlay: PreviewEnvelope
+): Promise<string | null> {
   try {
     debug('refreshing island', endpoint);
     const response = await fetch(endpoint, {
@@ -123,21 +159,16 @@ async function refreshIsland(
     });
     if (!response.ok) {
       debug('island refetch failed', endpoint, response.status);
-      return;
+      return null;
     }
     if (!isHtmlResponse(response)) {
       debug('island refetch wrong content-type', endpoint);
-      return;
+      return null;
     }
-    const html = await response.text();
-    if (latestRefresh.get(island) !== refresh) {
-      debug('island refetch superseded', endpoint);
-      return;
-    }
-    swapIslandHtml(island, html);
-    reportQuickEdit();
+    return await response.text();
   } catch (error) {
     debug('island refetch error', endpoint, error);
+    return null;
   }
 }
 

@@ -404,6 +404,50 @@ describe('initIslandRefresh targeting', () => {
     expect(await flush(300)).toEqual(['/tina-island/post']);
   });
 
+  function sendUpdate(id: string, data: object) {
+    setAdminOrigin('https://admin.test');
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: { type: 'updateData', id, data },
+        origin: 'https://admin.test',
+        source: window.parent,
+      })
+    );
+  }
+
+  it('applies an identical updateData again after a seed reset the form', async () => {
+    const store = setup();
+    sendUpdate('global', { name: 'Unsaved' });
+    await flush(50);
+
+    // A soft navigation re-seeds the saved data, then the admin re-sends.
+    store.seed('global', { name: 'Saved' });
+    sendUpdate('global', { name: 'Unsaved' });
+    expect(store.get('global')).toEqual({ name: 'Unsaved' });
+    expect(await flush(300)).toEqual([
+      '/tina-island/footer',
+      '/tina-island/header',
+    ]);
+  });
+
+  it('retries an identical updateData after its refresh failed', async () => {
+    setup();
+    sendUpdate('global', { name: 'a' });
+    await flush(50);
+
+    fetchMock.mockImplementationOnce(() =>
+      Promise.resolve(new Response('', { status: 500 }))
+    );
+    sendUpdate('global', { name: 'b' });
+    await flush(300);
+
+    sendUpdate('global', { name: 'b' });
+    expect(await flush(300)).toEqual([
+      '/tina-island/footer',
+      '/tina-island/header',
+    ]);
+  });
+
   it('debounces edits after the first pass', async () => {
     const store = setup();
     store.set('post', { a: 1 });
